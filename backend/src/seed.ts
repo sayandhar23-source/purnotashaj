@@ -7,9 +7,14 @@
  * so every homepage section has something to show. Safe to re-run — skips anything that
  * already exists by matching on email/slug/title.
  */
-import * as dns from "node:dns";
 import * as dotenv from 'dotenv';
 dotenv.config();
+
+import * as dns from 'node:dns';
+
+dns.setServers(['8.8.8.8']);
+
+console.log('DNS Servers:', dns.getServers());
 
 import mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
@@ -19,7 +24,11 @@ import { ProductSchema } from './common/schemas/product.schema';
 import { generateSku } from './common/utils/sku.util';
 
 function placeholderImage(label: string, bg = 'eee0d8', fg = '5f2814') {
-  return `https://placehold.co/600x800/${bg}/${fg}?text=${encodeURIComponent(label)}`;
+  // placehold.co defaults to SVG, which next/image blocks unless dangerouslyAllowSVG
+  // is set — request PNG explicitly so images actually render. Spaces must be `+`
+  // per placehold.co's documented format, not the %20 that encodeURIComponent produces.
+  const text = encodeURIComponent(label).replace(/%20/g, '+');
+  return `https://placehold.co/600x800/${bg}/${fg}/png?text=${text}`;
 }
 
 type CategoryNode = {
@@ -163,10 +172,6 @@ const demoProducts: DemoProduct[] = [
 ];
 
 async function seed() {
-  dns.setServers(["8.8.8.8"]);
-
-  console.log("DNS Servers:", dns.getServers());
-
   await mongoose.connect(process.env.MONGODB_URI as string);
 
   const UserModel = mongoose.model('User', UserSchema);
@@ -217,16 +222,13 @@ async function seed() {
 
   // --- Demo products ---
   let created = 0;
+  let updated = 0;
   for (const p of demoProducts) {
-    const exists = await ProductModel.findOne({ title: p.title });
-    if (exists) continue;
-
     const categoryDoc = categoryBySlug[p.categorySlug];
     if (!categoryDoc) {
       console.warn(`  ! Skipping "${p.title}" — category "${p.categorySlug}" not found.`);
       continue;
     }
-    const slug = p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
     let variants: any[] = [];
     if (p.variantAttr) {
@@ -248,6 +250,19 @@ async function seed() {
     ];
 
     const flags = p.flags || [];
+    const existing = await ProductModel.findOne({ title: p.title });
+
+    if (existing) {
+      // Product already exists (e.g. from an earlier seed run) — refresh its images
+      // in place. This is what fixes previously-broken SVG placeholder URLs without
+      // requiring you to delete and recreate every product by hand.
+      existing.images = images;
+      await existing.save();
+      updated++;
+      continue;
+    }
+
+    const slug = p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     await ProductModel.create({
       title: p.title,
       slug,
@@ -268,7 +283,7 @@ async function seed() {
     });
     created++;
   }
-  console.log(`✔ ${created} demo product(s) created.`);
+  console.log(`✔ ${created} demo product(s) created, ${updated} existing product(s) had their images refreshed.`);
 
   console.log('\nSeed complete.');
   console.log(`\nAdmin login → URL: /account/login   Email: ${adminEmail}   Password: ${adminPassword}`);
