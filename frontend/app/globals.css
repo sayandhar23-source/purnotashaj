@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { scroll-behavior: smooth; }
+body { @apply bg-white text-gray-900; }
+
+.btn-primary {
+  @apply bg-brand-500 hover:bg-brand-600 text-white font-medium px-5 py-2.5 rounded-full transition-colors;
+}
+.btn-outline {
+  @apply border border-brand-500 text-brand-500 hover:bg-brand-50 font-medium px-5 py-2.5 rounded-full transition-colors;
+}
+.input {
+  @apply w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent;
+}
+.card {
+  @apply bg-white rounded-2xl shadow-sm border border-gray-100;
+}
+
+/* Animated Purnota Shaj logo — PS outlines, fills gold, then reveals the full
+   wordmark, on a continuous loop. Used by components/AnimatedLogo.tsx. */
+@keyframes logoSilhouetteDraw {
+  0% { stroke-dashoffset: 900; opacity: 1; }
+  22% { stroke-dashoffset: 0; opacity: 1; }
+  88% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes logoFeaturesDraw {
+  0% { stroke-dashoffset: 300; opacity: 0; }
+  14% { stroke-dashoffset: 300; opacity: 1; }
+  30% { stroke-dashoffset: 0; opacity: 1; }
+  88% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes logoJewelryAppear {
+  0% { opacity: 0; }
+  32% { opacity: 0; }
+  40% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes logoNosepinSparkle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+}
+@keyframes logoEarringSway {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+@keyframes logoPsSequence {
+  0% { clip-path: inset(0 100% 0 0); color: transparent; opacity: 1; }
+  22% { clip-path: inset(0 0% 0 0); color: transparent; opacity: 1; }
+  40% { clip-path: inset(0 0% 0 0); color: transparent; opacity: 1; }
+  55% { clip-path: inset(0 0% 0 0); color: #F0C572; opacity: 1; }
+  65% { clip-path: inset(0 0% 0 0); color: #F0C572; opacity: 1; }
+  75% { clip-path: inset(0 0% 0 0); color: #F0C572; opacity: 0; }
+  100% { clip-path: inset(0 0% 0 0); color: #F0C572; opacity: 0; }
+}
+@keyframes logoFullSequence {
+  0% { opacity: 0; transform: translateY(6px) scale(0.94); }
+  65% { opacity: 0; transform: translateY(6px) scale(0.94); }
+  78% { opacity: 1; transform: translateY(0) scale(1); }
+  96% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(6px) scale(0.94); }
+}
