@@ -79,7 +79,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
       </h1>
       {category?.description && <p className="text-gray-500 mb-6">{category.description}</p>}
 
-      <div className="grid md:grid-cols-[200px_1fr] gap-8">
+      <div className={subcategories.length > 0 ? 'grid md:grid-cols-[200px_1fr] gap-8' : ''}>
         {subcategories.length > 0 && (
           <aside className="md:sticky md:top-20 h-fit">
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">

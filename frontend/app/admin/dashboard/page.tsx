@@ -11,7 +11,6 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import AdminLayout from '@/components/AdminLayout';
 import { api } from '@/lib/api';
 
 type Period = 'week' | 'month' | 'year' | 'custom';
@@ -56,7 +55,7 @@ export default function AdminDashboardPage() {
     }));
 
   return (
-    <AdminLayout>
+    <>
       <h1 className="text-2xl font-serif font-semibold mb-8">Revenue Overview</h1>
 
       {summary && (
@@ -141,7 +140,7 @@ export default function AdminDashboardPage() {
           </>
         )}
       </div>
-    </AdminLayout>
+    </>
   );
 }
 

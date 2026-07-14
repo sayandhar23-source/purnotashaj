@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import AdminLayout from '@/components/AdminLayout';
 import { api } from '@/lib/api';
 
 export default function AdminNewsletterPage() {
@@ -16,7 +15,7 @@ export default function AdminNewsletterPage() {
   }, []);
 
   return (
-    <AdminLayout>
+    <>
       <h1 className="text-2xl font-serif font-semibold mb-2">Newsletter Subscribers</h1>
       <p className="text-sm text-gray-500 mb-8">{total} total subscribers</p>
 
@@ -30,6 +29,6 @@ export default function AdminNewsletterPage() {
           </div>
         ))}
       </div>
-    </AdminLayout>
+  </>
   );
 }

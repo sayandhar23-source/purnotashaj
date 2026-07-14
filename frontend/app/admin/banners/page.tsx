@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import AdminLayout from '@/components/AdminLayout';
 import { api } from '@/lib/api';
 
 const emptyForm = {
@@ -56,7 +55,7 @@ export default function AdminBannersPage() {
   };
 
   return (
-    <AdminLayout>
+    <>
       <h1 className="text-2xl font-serif font-semibold mb-8">Sale Banners</h1>
       <p className="text-sm text-gray-500 mb-6">
         Upload separate images optimized for desktop (wide) and mobile (square/tall) — the storefront
@@ -115,6 +114,6 @@ export default function AdminBannersPage() {
           </div>
         ))}
       </div>
-    </AdminLayout>
+  </>
   );
 }

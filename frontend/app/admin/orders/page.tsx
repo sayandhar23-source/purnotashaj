@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { CheckCircle2 } from 'lucide-react';
-import AdminLayout from '@/components/AdminLayout';
 import { api } from '@/lib/api';
 
 const STATUSES = ['pending', 'paid', 'confirmed', 'shipped', 'delivered', 'cancelled', 'failed'];
@@ -39,7 +38,7 @@ export default function AdminOrdersPage() {
   const needsConfirmation = (o: any) => o.status === 'paid' && !o.adminConfirmed;
 
   return (
-    <AdminLayout>
+    <>
       <h1 className="text-2xl font-serif font-semibold mb-2">Orders</h1>
       <p className="text-sm text-gray-500 mb-8">
         New paid orders need your confirmation before the customer gets a confirmation email —
@@ -97,6 +96,6 @@ export default function AdminOrdersPage() {
           </div>
         ))}
       </div>
-    </AdminLayout>
+  </>
   );
 }

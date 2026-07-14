@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import AdminLayout from '@/components/AdminLayout';
 import { api } from '@/lib/api';
 
 const emptyForm = { name: '', slug: '', description: '', image: '', parent: '' };
@@ -50,7 +49,7 @@ export default function AdminCategoriesPage() {
   };
 
   return (
-    <AdminLayout>
+    <>
       <h1 className="text-2xl font-serif font-semibold mb-8">Categories</h1>
 
       <form onSubmit={handleSubmit} className="card p-6 space-y-4 mb-10 max-w-lg">
@@ -134,6 +133,6 @@ export default function AdminCategoriesPage() {
           </div>
         ))}
       </div>
-    </AdminLayout>
+  </>
   );
 }
