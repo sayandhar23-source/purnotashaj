@@ -61,7 +61,15 @@ export default async function CategoryPage({ params }: { params: { slug: string 
   const found = findNodeWithAncestors(tree, params.slug);
   const category = found?.node;
   const parent = found?.ancestors?.[found.ancestors.length - 1];
-  const subcategories: any[] = category?.children || [];
+  const ownChildren: any[] = category?.children || [];
+  const siblings: any[] = parent?.children || [];
+
+  // If this category has its own subcategories, show those in the filter sidebar.
+  // Otherwise (a leaf / subcategory page), fall back to showing its siblings, so the
+  // filter stays visible and usable even when browsing a subcategory directly.
+  const sidebarRoot = ownChildren.length > 0 ? category : parent;
+  const sidebarItems = ownChildren.length > 0 ? ownChildren : siblings;
+  const showSidebar = !!sidebarRoot && sidebarItems.length > 0;
 
   const categoryIds = category ? collectIds(category) : [];
   const products = await getProductsByCategoryIds(categoryIds);
@@ -79,25 +87,33 @@ export default async function CategoryPage({ params }: { params: { slug: string 
       </h1>
       {category?.description && <p className="text-gray-500 mb-6">{category.description}</p>}
 
-      <div className={subcategories.length > 0 ? 'grid md:grid-cols-[200px_1fr] gap-8' : ''}>
-        {subcategories.length > 0 && (
-          <aside className="md:sticky md:top-20 h-fit">
+      <div className={showSidebar ? 'md:grid md:grid-cols-[200px_1fr] md:gap-8' : ''}>
+        {showSidebar && (
+          <aside className="md:sticky md:top-20 md:h-fit mb-6 md:mb-0">
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">
               Filter by
             </p>
             {/* Horizontal scroll on mobile, vertical list on desktop */}
-            <div className="flex md:flex-col gap-2 overflow-x-auto pb-2 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">
+            <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
               <Link
-                href={`/category/${category.slug}`}
-                className="shrink-0 px-4 py-2 rounded-full md:rounded-lg border border-brand-500 bg-brand-50 text-brand-600 text-sm font-medium whitespace-nowrap"
+                href={`/category/${sidebarRoot.slug}`}
+                className={`shrink-0 min-w-fit px-4 py-2 rounded-full md:rounded-lg border text-sm font-medium whitespace-nowrap ${
+                  category?.slug === sidebarRoot.slug
+                    ? 'border-brand-500 bg-brand-50 text-brand-600'
+                    : 'border-gray-300 text-gray-600 hover:border-brand-400'
+                }`}
               >
-                All {category.name}
+                All {sidebarRoot.name}
               </Link>
-              {subcategories.map((sub: any) => (
+              {sidebarItems.map((sub: any) => (
                 <Link
                   key={sub._id}
                   href={`/category/${sub.slug}`}
-                  className="shrink-0 px-4 py-2 rounded-full md:rounded-lg border border-gray-300 text-sm hover:border-brand-500 hover:text-brand-600 whitespace-nowrap"
+                  className={`shrink-0 min-w-fit px-4 py-2 rounded-full md:rounded-lg border text-sm whitespace-nowrap ${
+                    category?.slug === sub.slug
+                      ? 'border-brand-500 bg-brand-50 text-brand-600 font-medium'
+                      : 'border-gray-300 text-gray-600 hover:border-brand-400 hover:text-brand-600'
+                  }`}
                 >
                   {sub.name}
                 </Link>
@@ -106,7 +122,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
           </aside>
         )}
 
-        <div>
+        <div className="min-w-0">
           {products.length === 0 ? (
             <div>
               <p className="text-gray-500 text-sm mb-8">
