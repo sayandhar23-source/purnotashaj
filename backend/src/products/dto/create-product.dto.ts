@@ -2,6 +2,7 @@ import {
   ArrayMaxSize,
   IsArray,
   IsBoolean,
+  IsDateString,
   IsNumber,
   IsOptional,
   IsString,
@@ -65,6 +66,26 @@ export class CreateProductDto {
   @IsOptional()
   @IsBoolean()
   isHotDeal?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  showOnSalePage?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  saleEnabled?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  salePrice?: number;
+
+  @IsOptional()
+  @IsDateString()
+  saleStartsAt?: string;
+
+  @IsOptional()
+  @IsDateString()
+  saleEndsAt?: string;
 
   @IsOptional()
   @IsArray()
