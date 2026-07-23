@@ -7,6 +7,7 @@ import { Category, CategoryDocument } from '../common/schemas/category.schema';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { generateSku } from '../common/utils/sku.util';
+import { computeSaleInfo } from '../common/utils/sale.util';
 
 @Injectable()
 export class ProductsService {
@@ -40,6 +41,17 @@ export class ProductsService {
     }
 
     return result;
+  }
+
+  // Attaches a computed `saleInfo` object to a product (or list of products) —
+  // never stored, always derived fresh from saleEnabled/salePrice/saleStartsAt/saleEndsAt.
+  private withSaleInfo(product: any) {
+    const obj = typeof product.toObject === 'function' ? product.toObject() : product;
+    return { ...obj, saleInfo: computeSaleInfo(obj) };
+  }
+
+  private withSaleInfoList(products: any[]) {
+    return products.map((p) => this.withSaleInfo(p));
   }
 
   async create(dto: CreateProductDto) {
@@ -87,7 +99,46 @@ export class ProductsService {
       this.productModel.countDocuments(filter),
     ]);
 
-    return { products, total, page, pages: Math.ceil(total / limit) };
+    return { products: this.withSaleInfoList(products), total, page, pages: Math.ceil(total / limit) };
+  }
+
+  // Products for the dedicated /sale page: anything individually flagged
+  // showOnSalePage=true, plus everything in a category (or its subcategories)
+  // that has showOnSalePage=true.
+  async findSalePageProducts() {
+    const allCategories = await this.categoryModel.find({ isActive: true });
+
+    const childrenByParent: Record<string, any[]> = {};
+    allCategories.forEach((c) => {
+      const key = c.parent ? c.parent.toString() : 'root';
+      childrenByParent[key] = childrenByParent[key] || [];
+      childrenByParent[key].push(c);
+    });
+
+    function collectDescendantIds(id: string): string[] {
+      const children = childrenByParent[id] || [];
+      let ids: string[] = [];
+      for (const child of children) {
+        ids.push(child._id.toString());
+        ids.push(...collectDescendantIds(child._id.toString()));
+      }
+      return ids;
+    }
+
+    const flaggedCategories = allCategories.filter((c) => c.showOnSalePage);
+    let categoryIds: string[] = [];
+    flaggedCategories.forEach((c) => {
+      categoryIds.push(c._id.toString());
+      categoryIds.push(...collectDescendantIds(c._id.toString()));
+    });
+
+    const filter: any = {
+      isActive: true,
+      $or: [{ showOnSalePage: true }, ...(categoryIds.length > 0 ? [{ category: { $in: categoryIds } }] : [])],
+    };
+
+    const products = await this.productModel.find(filter).populate('category').sort({ createdAt: -1 });
+    return this.withSaleInfoList(products);
   }
 
   // Admin: list everything including inactive
@@ -97,19 +148,19 @@ export class ProductsService {
       this.productModel.find().populate('category').sort({ createdAt: -1 }).skip(skip).limit(limit),
       this.productModel.countDocuments(),
     ]);
-    return { products, total, page, pages: Math.ceil(total / limit) };
+    return { products: this.withSaleInfoList(products), total, page, pages: Math.ceil(total / limit) };
   }
 
   async findBySlug(slug: string) {
     const product = await this.productModel.findOne({ slug, isActive: true }).populate('category');
     if (!product) throw new NotFoundException('Product not found');
-    return product;
+    return this.withSaleInfo(product);
   }
 
   async findById(id: string) {
     const product = await this.productModel.findById(id).populate('category');
     if (!product) throw new NotFoundException('Product not found');
-    return product;
+    return this.withSaleInfo(product);
   }
 
   async update(id: string, dto: UpdateProductDto) {
@@ -118,7 +169,7 @@ export class ProductsService {
     if (dto.variants) update.totalStock = this.computeTotalStock(dto);
     const product = await this.productModel.findByIdAndUpdate(id, update, { new: true });
     if (!product) throw new NotFoundException('Product not found');
-    return product;
+    return this.withSaleInfo(product);
   }
 
   async remove(id: string) {
