@@ -46,6 +46,12 @@ export class Product {
   @Prop({ type: [String], default: [] })
   images: string[];
 
+  // A product demo video — either a YouTube link (recommended: upload as
+  // "Unlisted") or a direct link to an MP4/WebM file from a proper video host.
+  // Google Drive links do NOT work reliably for video — see docs.
+  @Prop()
+  videoUrl?: string;
+
   @Prop({ required: true })
   basePrice: number;
 
