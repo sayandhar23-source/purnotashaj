@@ -82,6 +82,26 @@ export class Product {
   @Prop({ default: false })
   isHotDeal: boolean;
 
+  // Shows this product on the dedicated /sale page, independent of its category's
+  // own showOnSalePage flag (either one is enough to include it there).
+  @Prop({ default: false })
+  showOnSalePage: boolean;
+
+  // Per-product flash sale: a discounted price active for a specific time window,
+  // toggled on/off from the admin product form. The discount percentage and
+  // remaining time are computed at read-time, not stored.
+  @Prop({ default: false })
+  saleEnabled: boolean;
+
+  @Prop()
+  salePrice?: number;
+
+  @Prop()
+  saleStartsAt?: Date;
+
+  @Prop()
+  saleEndsAt?: Date;
+
   @Prop({ default: 0 })
   totalStock: number;
 
