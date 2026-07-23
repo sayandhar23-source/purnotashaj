@@ -29,6 +29,10 @@ export class CreateProductDto {
   @ArrayMaxSize(5, { message: 'A product can have at most 5 images.' })
   images?: string[];
 
+  @IsOptional()
+  @IsString()
+  videoUrl?: string;
+
   @IsNumber()
   basePrice: number;
 
