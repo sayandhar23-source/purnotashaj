@@ -20,6 +20,7 @@ const emptyForm = {
   description: '',
   category: '',
   images: [''],
+  videoUrl: '',
   basePrice: 0,
   compareAtPrice: undefined as number | undefined,
   isActive: true,
@@ -49,6 +50,7 @@ export default function ProductForm({
           description: editingProduct.description || '',
           category: editingProduct.category?._id || editingProduct.category,
           images: editingProduct.images?.length ? editingProduct.images : [''],
+          videoUrl: editingProduct.videoUrl || '',
           basePrice: editingProduct.basePrice,
           compareAtPrice: editingProduct.compareAtPrice,
           isActive: editingProduct.isActive,
@@ -151,6 +153,17 @@ export default function ProductForm({
           <button type="button" onClick={() => setForm({ ...form, images: [...form.images, ''] })}
             className="text-sm text-brand-500">+ Add image URL</button>
         )}
+      </div>
+
+      <div>
+        <p className="text-sm font-medium mb-1">Product video (optional)</p>
+        <p className="text-xs text-gray-500 mb-2">
+          A YouTube link (upload as "Unlisted") or a direct .mp4/.webm file from a proper video
+          host. Google Drive links don't work reliably for video — avoid those.
+        </p>
+        <input className="input" placeholder="https://youtube.com/watch?v=... or https://.../video.mp4"
+          value={form.videoUrl}
+          onChange={(e) => setForm({ ...form, videoUrl: e.target.value })} />
       </div>
 
       <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
