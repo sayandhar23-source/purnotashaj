@@ -19,6 +19,10 @@ export class CreateCategoryDto {
   @IsBoolean()
   isActive?: boolean;
 
+  @IsOptional()
+  @IsBoolean()
+  showOnSalePage?: boolean;
+
   // Pass a parent category's _id to make this a subcategory
   @IsOptional()
   @IsString()
