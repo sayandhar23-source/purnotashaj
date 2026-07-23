@@ -16,6 +16,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { AdminLogsModule } from './admin-logs/admin-logs.module';
 import { MailModule } from './mail/mail.module';
 import { SettingsModule } from './settings/settings.module';
+import { SaleBannerModule } from './sale-banner/sale-banner.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { SettingsModule } from './settings/settings.module';
     AnalyticsModule,
     AdminLogsModule,
     SettingsModule,
+    SaleBannerModule,
   ],
 })
 export class AppModule {}
