@@ -15,6 +15,13 @@ export type ProductSummary = {
   images: string[];
   basePrice: number;
   compareAtPrice?: number;
+  saleInfo?: {
+    isActive: boolean;
+    effectivePrice: number;
+    originalPrice: number;
+    discountPercent: number;
+    endsAt: string | null;
+  };
 };
 
 export default function ProductCard({ product }: { product: ProductSummary }) {
@@ -39,11 +46,13 @@ export default function ProductCard({ product }: { product: ProductSummary }) {
 
   useEffect(() => () => stopCycling(), []); // cleanup on unmount
 
-  const discount =
-    product.compareAtPrice && product.compareAtPrice > product.basePrice
-      ? Math.round(
-          ((product.compareAtPrice - product.basePrice) / product.compareAtPrice) * 100,
-        )
+  const onSale = !!product.saleInfo?.isActive;
+  const displayPrice = onSale ? product.saleInfo!.effectivePrice : product.basePrice;
+  const strikePrice = onSale ? product.saleInfo!.originalPrice : product.compareAtPrice;
+  const discount = onSale
+    ? product.saleInfo!.discountPercent
+    : product.compareAtPrice && product.compareAtPrice > product.basePrice
+      ? Math.round(((product.compareAtPrice - product.basePrice) / product.compareAtPrice) * 100)
       : null;
 
   const toggleWishlist = async (e: React.MouseEvent) => {
@@ -86,8 +95,8 @@ export default function ProductCard({ product }: { product: ProductSummary }) {
           </div>
         )}
         {discount && (
-          <span className="absolute top-3 left-3 bg-brand-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
-            -{discount}%
+          <span className={`absolute top-3 left-3 text-white text-xs font-semibold px-2 py-1 rounded-full ${onSale ? 'bg-red-500' : 'bg-brand-500'}`}>
+            {onSale ? `SALE -${discount}%` : `-${discount}%`}
           </span>
         )}
         {images.length > 1 && (
@@ -113,10 +122,10 @@ export default function ProductCard({ product }: { product: ProductSummary }) {
       <div className="mt-3">
         <h3 className="text-sm font-medium text-gray-800 line-clamp-1">{product.title}</h3>
         <div className="flex items-center gap-2 mt-1">
-          <span className="font-semibold">₹{product.basePrice}</span>
-          {product.compareAtPrice && product.compareAtPrice > product.basePrice && (
+          <span className="font-semibold">₹{displayPrice}</span>
+          {strikePrice && strikePrice > displayPrice && (
             <span className="text-gray-400 text-sm line-through">
-              ₹{product.compareAtPrice}
+              ₹{strikePrice}
             </span>
           )}
         </div>
