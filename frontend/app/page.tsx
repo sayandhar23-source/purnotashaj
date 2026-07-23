@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import SaleBanner from '@/components/SaleBanner';
+import TempleSaleBanner from '@/components/TempleSaleBanner';
 import ProductRow from '@/components/ProductRow';
 import { ProductSummary } from '@/components/ProductCard';
 
@@ -39,19 +39,34 @@ async function getSection(param: string): Promise<ProductSummary[]> {
   return data?.products || [];
 }
 
+async function getSaleBannerContent() {
+  const data = await safeJson(`${API}/sale-banner`);
+  return data;
+}
+
 export default async function HomePage() {
   const categoryTree = await getCategoryTree();
 
-  const [newArrivals, bestSellers, hotDeals, categoryProductLists] = await Promise.all([
+  const [newArrivals, bestSellers, hotDeals, categoryProductLists, bannerContent] = await Promise.all([
     getSection('newArrival'),
     getSection('bestSeller'),
     getSection('hotDeal'),
     Promise.all(categoryTree.map((cat: any) => getProductsForCategory(cat))),
+    getSaleBannerContent(),
   ]);
 
   return (
     <div>
-      <SaleBanner />
+      {bannerContent?.isActive !== false && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+          <TempleSaleBanner
+            heroTitle={bannerContent?.heroTitle || 'Jagannath Rath Yatra Sale'}
+            heroSubtitle={bannerContent?.heroSubtitle}
+            ctaText={bannerContent?.ctaText || 'Shop the sale'}
+            ctaHref="/sale"
+          />
+        </div>
+      )}
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <h2 className="text-xl font-serif font-semibold mb-6">Shop by Category</h2>
