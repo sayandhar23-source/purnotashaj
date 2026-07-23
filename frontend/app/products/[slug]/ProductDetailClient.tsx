@@ -8,6 +8,8 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 import ProductCard, { ProductSummary } from '@/components/ProductCard';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api';
+import { getVideoInfo } from '@/lib/video';
+import SaleCountdown from '@/components/SaleCountdown';
 
 type Variant = {
   _id: string;
@@ -25,10 +27,18 @@ type Product = {
   slug: string;
   description?: string;
   images: string[];
+  videoUrl?: string;
   basePrice: number;
   compareAtPrice?: number;
   variants: Variant[];
   category?: { name: string };
+  saleInfo?: {
+    isActive: boolean;
+    effectivePrice: number;
+    originalPrice: number;
+    discountPercent: number;
+    endsAt: string | null;
+  };
 };
 
 export default function ProductDetailClient({
@@ -47,8 +57,17 @@ export default function ProductDetailClient({
   const [qty, setQty] = useState(1);
   const { user } = useAuth();
 
-  const price = selectedVariant ? selectedVariant.price : product.basePrice;
-  const compareAt = selectedVariant ? selectedVariant.compareAtPrice : product.compareAtPrice;
+  const onSale = !selectedVariant && !!product.saleInfo?.isActive;
+  const price = onSale
+    ? product.saleInfo!.effectivePrice
+    : selectedVariant
+      ? selectedVariant.price
+      : product.basePrice;
+  const compareAt = onSale
+    ? product.saleInfo!.originalPrice
+    : selectedVariant
+      ? selectedVariant.compareAtPrice
+      : product.compareAtPrice;
   const images = selectedVariant?.image ? [selectedVariant.image, ...product.images] : product.images;
 
   const handleWishlist = async () => {
@@ -65,6 +84,7 @@ export default function ProductDetailClient({
   };
 
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const videoInfo = getVideoInfo(product.videoUrl);
 
   const goToImage = (index: number) => {
     setActiveImage((index + images.length) % images.length);
@@ -164,7 +184,18 @@ export default function ProductDetailClient({
           {compareAt && compareAt > price && (
             <span className="text-gray-400 line-through">₹{compareAt}</span>
           )}
+          {onSale && product.saleInfo!.discountPercent > 0 && (
+            <span className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+              -{product.saleInfo!.discountPercent}%
+            </span>
+          )}
         </div>
+
+        {onSale && product.saleInfo?.endsAt && (
+          <div className="mt-2">
+            <SaleCountdown endsAt={product.saleInfo.endsAt} />
+          </div>
+        )}
 
         {product.variants?.length > 0 && (
           <div className="mt-6">
@@ -221,6 +252,30 @@ export default function ProductDetailClient({
         {product.description && (
           <div className="mt-8 text-sm text-gray-600 leading-relaxed whitespace-pre-line">
             {product.description}
+          </div>
+        )}
+
+        {videoInfo && (
+          <div className="mt-8">
+            <p className="text-sm font-medium text-gray-800 mb-3">Product Video</p>
+            <div className="relative aspect-video rounded-xl overflow-hidden bg-black">
+              {videoInfo.type === 'youtube' ? (
+                <iframe
+                  src={videoInfo.embedUrl}
+                  title={`${product.title} video`}
+                  className="absolute inset-0 w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  src={videoInfo.url}
+                  controls
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-contain"
+                />
+              )}
+            </div>
           </div>
         )}
       </div>
