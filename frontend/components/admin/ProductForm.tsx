@@ -28,8 +28,20 @@ const emptyForm = {
   isNewArrival: false,
   isBestSeller: false,
   isHotDeal: false,
+  saleEnabled: false,
+  salePrice: undefined as number | undefined,
+  saleEndsAt: '',
   variants: [] as Variant[],
 };
+
+// Converts an ISO date string to the "YYYY-MM-DDTHH:mm" format <input type="datetime-local"> expects.
+function toDatetimeLocal(value?: string) {
+  if (!value) return '';
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return '';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 export default function ProductForm({
   categories,
@@ -58,6 +70,9 @@ export default function ProductForm({
           isNewArrival: !!editingProduct.isNewArrival,
           isBestSeller: !!editingProduct.isBestSeller,
           isHotDeal: !!editingProduct.isHotDeal,
+          saleEnabled: !!editingProduct.saleEnabled,
+          salePrice: editingProduct.salePrice,
+          saleEndsAt: toDatetimeLocal(editingProduct.saleEndsAt),
           variants: editingProduct.variants || [],
         }
       : { ...emptyForm },
@@ -85,7 +100,11 @@ export default function ProductForm({
     e.preventDefault();
     setSaving(true);
     try {
-      const payload = { ...form, images: form.images.filter(Boolean) };
+      const payload = {
+        ...form,
+        images: form.images.filter(Boolean),
+        saleEndsAt: form.saleEndsAt ? new Date(form.saleEndsAt).toISOString() : undefined,
+      };
       if (editingProduct) {
         await api.patch(`/products/${editingProduct._id}`, payload);
         toast.success('Product updated.');
@@ -128,6 +147,35 @@ export default function ProductForm({
         <input type="number" className="input" placeholder="Compare-at price (optional)"
           value={form.compareAtPrice ?? ''}
           onChange={(e) => setForm({ ...form, compareAtPrice: e.target.value ? Number(e.target.value) : undefined })} />
+      </div>
+
+      <div className="border rounded-lg p-4 space-y-3 bg-red-50/40 border-red-100">
+        <label className="flex items-center gap-2 text-sm font-medium">
+          <input type="checkbox" checked={form.saleEnabled}
+            onChange={(e) => setForm({ ...form, saleEnabled: e.target.checked })} />
+          Flash sale (applies only when no variant is selected — see docs)
+        </label>
+        {form.saleEnabled && (
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs text-gray-500 block mb-1">Sale price</label>
+              <input type="number" className="input" placeholder="e.g. 399"
+                value={form.salePrice ?? ''}
+                onChange={(e) => setForm({ ...form, salePrice: e.target.value ? Number(e.target.value) : undefined })} />
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 block mb-1">Sale ends at</label>
+              <input type="datetime-local" className="input"
+                value={form.saleEndsAt}
+                onChange={(e) => setForm({ ...form, saleEndsAt: e.target.value })} />
+            </div>
+            {form.salePrice != null && form.basePrice > 0 && form.salePrice < form.basePrice && (
+              <p className="text-xs text-red-600 sm:col-span-2">
+                {Math.round(((form.basePrice - form.salePrice) / form.basePrice) * 100)}% off — the base price (₹{form.basePrice}) will show struck through, with a live countdown on the product page.
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       <div>
