@@ -20,6 +20,11 @@ export class Category {
   @Prop({ default: true })
   isActive: boolean;
 
+  // If true, every product in this category (and its subcategories) appears on
+  // the dedicated /sale page, in addition to any individually-flagged products.
+  @Prop({ default: false })
+  showOnSalePage: boolean;
+
   // If set, this category is a subcategory of another (e.g. "T-Shirts" under "Clothing")
   @Prop({ type: Types.ObjectId, ref: 'Category', default: null })
   parent?: Types.ObjectId | null;
