@@ -49,6 +49,11 @@ export class ProductsController {
     });
   }
 
+  @Get('sale-page')
+  findSalePageProducts() {
+    return this.productsService.findSalePageProducts();
+  }
+
   @Get('slug/:slug')
   findBySlug(@Param('slug') slug: string) {
     return this.productsService.findBySlug(slug);
