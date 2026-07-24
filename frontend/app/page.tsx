@@ -64,19 +64,19 @@ export default async function HomePage() {
             heroTitle={bannerContent?.heroTitle || 'Jagannath Rath Yatra Sale'}
             heroSubtitle={bannerContent?.heroSubtitle}
             ctaText={bannerContent?.ctaText || 'Shop the sale'}
-            ctaHref="/sale"
+            ctaHref="/sale#products"
           />
         </div>
       )}
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <h2 className="text-xl font-serif font-semibold mb-6">Shop by Category</h2>
-        <div className="flex sm:grid sm:grid-cols-3 md:grid-cols-6 gap-3 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory">
           {categoryTree.map((cat: any) => (
             <Link
               key={cat._id}
               href={`/category/${cat.slug}`}
-              className="card shrink-0 w-28 sm:w-auto p-4 sm:p-6 text-center hover:shadow-md transition-shadow"
+              className="card shrink-0 w-28 sm:w-36 p-4 sm:p-6 text-center hover:shadow-md transition-shadow snap-start"
             >
               <span className="font-medium text-sm">{cat.name}</span>
             </Link>
