@@ -64,3 +64,22 @@ body { @apply bg-white text-gray-900; }
   96% { opacity: 1; transform: translateY(0) scale(1); }
   100% { opacity: 0; transform: translateY(6px) scale(0.94); }
 }
+
+/* Sale banner template artwork — gentle, slow, continuous decorative motion (5s loops
+   for oscillating elements, longer for full rotations so it never feels frantic). */
+@keyframes bannerFlagSway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+@keyframes bannerGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+@keyframes bannerCloudDriftA { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
+@keyframes bannerCloudDriftB { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-7px); } }
+@keyframes bannerBindiPulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.25); opacity: 1; } }
+@keyframes bannerTrishulSway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes bannerEyeShimmer { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
+@keyframes bannerChakraSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Sale banner text entrance — plays once on mount, staggered per element via
+   animation-delay, rather than looping (a looping fade on readable text is
+   distracting; the artwork loops, the text just arrives once). */
+@keyframes bannerTextIn {
+  0% { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
