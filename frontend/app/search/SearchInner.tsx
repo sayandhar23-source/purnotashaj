@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import ProductCard, { ProductSummary } from '@/components/ProductCard';
+import ProductGridSkeleton from '@/components/skeletons/ProductGridSkeleton';
 
 function SearchInner() {
   const searchParams = useSearchParams();
@@ -45,7 +46,7 @@ function SearchInner() {
       </form>
 
       {loading ? (
-        <p className="text-gray-400 text-sm">Searching...</p>
+        <ProductGridSkeleton className="grid grid-cols-2 md:grid-cols-4 gap-6" />
       ) : products.length === 0 ? (
         <p className="text-gray-500 text-sm">No products found.</p>
       ) : (
