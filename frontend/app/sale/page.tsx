@@ -1,5 +1,11 @@
 import TempleSaleBanner from '@/components/TempleSaleBanner';
 import ProductCard, { ProductSummary } from '@/components/ProductCard';
+import Breadcrumbs from '@/components/Breadcrumbs';
+
+export const metadata = {
+  title: 'Sale | Purnota Shaj',
+  description: 'Festive picks, blessed with a discount.',
+};
 
 const API = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api').replace(/\/+$/, '');
 
@@ -27,7 +33,10 @@ export default async function SalePage() {
 
   return (
     <div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <Breadcrumbs items={[{ label: 'Sale' }]} />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2">
         <TempleSaleBanner
           template={bannerContent?.activeTemplate}
           heroTitle={bannerContent?.pageTitle || 'Rath Yatra Sale'}
