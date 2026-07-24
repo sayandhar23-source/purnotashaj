@@ -1,5 +1,9 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import ProductCard, { ProductSummary } from '@/components/ProductCard';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SortFilterBar from '@/components/SortFilterBar';
+import { findNodeWithAncestors, collectIds } from '@/lib/categoryTree';
 
 const API = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api').replace(/\/+$/, '');
 
@@ -18,10 +22,17 @@ async function getCategoryTree() {
   return data || [];
 }
 
-async function getProductsByCategoryIds(ids: string[]): Promise<ProductSummary[]> {
-  if (ids.length === 0) return [];
-  const data = await safeJson(`${API}/products?categories=${ids.join(',')}&limit=60`);
-  return data?.products || [];
+async function getProductsByCategoryIds(
+  ids: string[],
+  opts: { sort?: string; priceMin?: string; priceMax?: string },
+): Promise<{ products: ProductSummary[]; total: number }> {
+  if (ids.length === 0) return { products: [], total: 0 };
+  const qs = new URLSearchParams({ categories: ids.join(','), limit: '60' });
+  if (opts.sort) qs.set('sort', opts.sort);
+  if (opts.priceMin) qs.set('priceMin', opts.priceMin);
+  if (opts.priceMax) qs.set('priceMax', opts.priceMax);
+  const data = await safeJson(`${API}/products?${qs.toString()}`);
+  return { products: data?.products || [], total: data?.total || 0 };
 }
 
 async function getFeatured(): Promise<ProductSummary[]> {
@@ -29,54 +40,48 @@ async function getFeatured(): Promise<ProductSummary[]> {
   return data?.products || [];
 }
 
-// Recursively search the category tree for a node matching `slug`, tracking the
-// chain of ancestors along the way (used for the "back to parent" link).
-function findNodeWithAncestors(
-  nodes: any[],
-  slug: string,
-  ancestors: any[] = [],
-): { node: any; ancestors: any[] } | null {
-  for (const node of nodes) {
-    if (node.slug === slug) return { node, ancestors };
-    if (node.children?.length) {
-      const found = findNodeWithAncestors(node.children, slug, [...ancestors, node]);
-      if (found) return found;
-    }
-  }
-  return null;
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const tree = await getCategoryTree();
+  const found = findNodeWithAncestors(tree, params.slug);
+  const name = found?.node?.name || params.slug.replace(/-/g, ' ');
+  return {
+    title: `${name} | Purnota Shaj`,
+    description: found?.node?.description || `Shop ${name} at Purnota Shaj.`,
+  };
 }
 
-// Collect this node's id plus every descendant id, recursively — so a top-level
-// category page includes products filed under any of its subcategories.
-function collectIds(node: any): string[] {
-  const ids = [node._id];
-  for (const child of node.children || []) {
-    ids.push(...collectIds(child));
-  }
-  return ids;
-}
-
-export default async function CategoryPage({ params }: { params: { slug: string } }) {
+export default async function CategoryPage({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams: { sort?: string; priceMin?: string; priceMax?: string };
+}) {
   const tree = await getCategoryTree();
   const found = findNodeWithAncestors(tree, params.slug);
   const category = found?.node;
-  const parent = found?.ancestors?.[found.ancestors.length - 1];
+  const ancestors: any[] = found?.ancestors || [];
+  const parent = ancestors[ancestors.length - 1];
   const ownChildren: any[] = category?.children || [];
   const siblings: any[] = parent?.children || [];
 
-  // If this category has its own subcategories, show those in the filter sidebar.
-  // Otherwise (a leaf / subcategory page), fall back to showing its siblings, so the
-  // filter stays visible and usable even when browsing a subcategory directly.
   const sidebarRoot = ownChildren.length > 0 ? category : parent;
   const sidebarItems = ownChildren.length > 0 ? ownChildren : siblings;
   const showSidebar = !!sidebarRoot && sidebarItems.length > 0;
 
   const categoryIds = category ? collectIds(category) : [];
-  const products = await getProductsByCategoryIds(categoryIds);
+  const { products, total } = await getProductsByCategoryIds(categoryIds, searchParams);
   const suggestions = products.length === 0 ? await getFeatured() : [];
+
+  const breadcrumbItems = [
+    ...ancestors.map((a) => ({ label: a.name, href: `/category/${a.slug}` })),
+    ...(category ? [{ label: category.name }] : []),
+  ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <Breadcrumbs items={breadcrumbItems} />
+
       {parent && (
         <Link href={`/category/${parent.slug}`} className="text-sm text-brand-500 mb-2 inline-block">
           ← All in {parent.name}
@@ -93,7 +98,6 @@ export default async function CategoryPage({ params }: { params: { slug: string 
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">
               Filter by
             </p>
-            {/* Horizontal scroll on mobile, vertical list on desktop */}
             <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
               <Link
                 href={`/category/${sidebarRoot.slug}`}
@@ -139,11 +143,14 @@ export default async function CategoryPage({ params }: { params: { slug: string 
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-              {products.map((p) => (
-                <ProductCard key={p._id} product={p} />
-              ))}
-            </div>
+            <>
+              <SortFilterBar resultCount={total} />
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
+                {products.map((p) => (
+                  <ProductCard key={p._id} product={p} />
+                ))}
+              </div>
+            </>
           )}
         </div>
       </div>
