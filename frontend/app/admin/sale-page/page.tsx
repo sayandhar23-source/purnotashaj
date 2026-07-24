@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
+import { SALE_BANNER_TEMPLATES, SaleBannerTemplateId } from '@/components/sale-banner-templates/config';
 
 export default function AdminSalePagePage() {
   const [content, setContent] = useState({
@@ -12,6 +13,7 @@ export default function AdminSalePagePage() {
     pageTitle: '',
     pageSubtitle: '',
     isActive: true,
+    activeTemplate: 'festive-sale' as SaleBannerTemplateId,
   });
   const [categories, setCategories] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -49,6 +51,18 @@ export default function AdminSalePagePage() {
       toast.error(err?.message || 'Could not save.');
     } finally {
       setSavingContent(false);
+    }
+  };
+
+  const activateTemplate = async (id: SaleBannerTemplateId) => {
+    const previous = content.activeTemplate;
+    setContent((prev) => ({ ...prev, activeTemplate: id }));
+    try {
+      await api.patch('/sale-banner', { activeTemplate: id });
+      toast.success(`"${SALE_BANNER_TEMPLATES[id].label}" is now live.`);
+    } catch (err: any) {
+      toast.error(err?.message || 'Could not activate template.');
+      setContent((prev) => ({ ...prev, activeTemplate: previous }));
     }
   };
 
@@ -130,6 +144,42 @@ export default function AdminSalePagePage() {
           {savingContent ? 'Saving...' : 'Save text'}
         </button>
       </form>
+
+      <div className="card p-6 mb-10">
+        <h2 className="font-semibold mb-1">Banner template</h2>
+        <p className="text-xs text-gray-500 mb-4">
+          Pick which design is live — the title/subtitle/button text above applies to whichever
+          one is active. Switch anytime with one click, e.g. once a festival sale ends.
+        </p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {(Object.keys(SALE_BANNER_TEMPLATES) as SaleBannerTemplateId[]).map((id) => {
+            const tpl = SALE_BANNER_TEMPLATES[id];
+            const Art = tpl.Art;
+            const active = content.activeTemplate === id;
+            return (
+              <button
+                key={id}
+                onClick={() => activateTemplate(id)}
+                className={`text-left rounded-xl border-2 overflow-hidden transition-colors ${
+                  active ? 'border-brand-500' : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="relative aspect-video" style={{ backgroundColor: tpl.leftBg }}>
+                  <Art />
+                </div>
+                <div className="p-3 flex items-center justify-between">
+                  <span className="text-xs font-medium">{tpl.label}</span>
+                  {active && (
+                    <span className="text-[10px] bg-brand-500 text-white px-2 py-0.5 rounded-full">
+                      Active
+                    </span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       <div className="card p-6 mb-10">
         <h2 className="font-semibold mb-1">Categories on the sale page</h2>
