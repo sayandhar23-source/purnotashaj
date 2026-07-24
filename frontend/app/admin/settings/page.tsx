@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { MessageCircle, Instagram, Facebook, Youtube } from 'lucide-react';
+import { MessageCircle, Instagram, Facebook, Youtube, Send } from 'lucide-react';
 import AccountSettingsForm from '@/components/AccountSettingsForm';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api';
@@ -12,6 +12,9 @@ export default function AdminSettingsPage() {
   useDocumentTitle('Admin · Settings');
   const { refreshUser } = useAuth();
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [telegramChatId, setTelegramChatId] = useState('');
+  const [savingTelegram, setSavingTelegram] = useState(false);
+  const [settingUpWebhook, setSettingUpWebhook] = useState(false);
   const [social, setSocial] = useState({
     instagramUrl: '',
     facebookUrl: '',
@@ -27,6 +30,7 @@ export default function AdminSettingsPage() {
       .get('/settings')
       .then((res) => {
         setWhatsappNumber(res.data.whatsappNumber || '');
+        setTelegramChatId(res.data.telegramChatId || '');
         setSocial({
           instagramUrl: res.data.instagramUrl || '',
           facebookUrl: res.data.facebookUrl || '',
@@ -47,6 +51,35 @@ export default function AdminSettingsPage() {
       toast.error(err?.message || 'Could not update WhatsApp number.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSaveTelegram = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingTelegram(true);
+    try {
+      await api.patch('/settings', { telegramChatId });
+      toast.success('Telegram chat ID updated.');
+    } catch (err: any) {
+      toast.error(err?.message || 'Could not update Telegram chat ID.');
+    } finally {
+      setSavingTelegram(false);
+    }
+  };
+
+  const handleSetupWebhook = async () => {
+    setSettingUpWebhook(true);
+    try {
+      const res = await api.post('/chat/setup-webhook');
+      if (res.data.ok) {
+        toast.success('Telegram webhook connected — replies will now reach the site.');
+      } else {
+        toast.error(res.data.message || 'Could not set up the webhook.');
+      }
+    } catch (err: any) {
+      toast.error(err?.message || 'Could not set up the webhook.');
+    } finally {
+      setSettingUpWebhook(false);
     }
   };
 
@@ -90,6 +123,52 @@ export default function AdminSettingsPage() {
               />
               <button type="submit" disabled={saving} className="btn-primary w-full">
                 {saving ? 'Saving...' : 'Update WhatsApp Number'}
+              </button>
+            </>
+          )}
+        </form>
+
+        <form onSubmit={handleSaveTelegram} className="card p-6 space-y-3">
+          <h3 className="font-semibold flex items-center gap-2">
+            <Send size={18} className="text-blue-500" />
+            Live Chat (Telegram)
+          </h3>
+          <p className="text-xs text-gray-500">
+            Messages from the site's live chat bubble get forwarded to this Telegram chat.
+            Reply to a message on Telegram (use Telegram's native "reply" feature, not a new
+            message) and it appears back in the customer's chat on the site.
+          </p>
+          <details className="text-xs text-gray-500">
+            <summary className="cursor-pointer text-brand-500 font-medium">
+              How do I find my chat ID?
+            </summary>
+            <ol className="list-decimal ml-4 mt-2 space-y-1">
+              <li>Create a bot via <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-brand-500 underline">@BotFather</a> on Telegram, and set its token as <code>TELEGRAM_BOT_TOKEN</code> in the backend environment (Render).</li>
+              <li>Message your new bot anything (e.g. "hi") to start a chat with it.</li>
+              <li>Message <a href="https://t.me/userinfobot" target="_blank" rel="noopener noreferrer" className="text-brand-500 underline">@userinfobot</a> to get your numeric Telegram user ID — that's your chat ID.</li>
+              <li>Paste it below and save, then click "Connect webhook".</li>
+            </ol>
+          </details>
+          {loading ? (
+            <p className="text-sm text-gray-400">Loading...</p>
+          ) : (
+            <>
+              <input
+                className="input"
+                placeholder="e.g. 123456789"
+                value={telegramChatId}
+                onChange={(e) => setTelegramChatId(e.target.value.replace(/[^0-9-]/g, ''))}
+              />
+              <button type="submit" disabled={savingTelegram} className="btn-primary w-full">
+                {savingTelegram ? 'Saving...' : 'Update Chat ID'}
+              </button>
+              <button
+                type="button"
+                onClick={handleSetupWebhook}
+                disabled={settingUpWebhook}
+                className="btn-outline w-full"
+              >
+                {settingUpWebhook ? 'Connecting...' : 'Connect webhook'}
               </button>
             </>
           )}
