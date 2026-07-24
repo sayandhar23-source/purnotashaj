@@ -5,8 +5,11 @@ import Link from 'next/link';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 import ProductCard, { ProductSummary } from '@/components/ProductCard';
+import { useDocumentTitle } from '@/lib/useDocumentTitle';
+import ProductGridSkeleton from '@/components/skeletons/ProductGridSkeleton';
 
 export default function WishlistPage() {
+  useDocumentTitle('Wishlist');
   const { user, loading } = useAuth();
   const [products, setProducts] = useState<ProductSummary[]>([]);
   const [fetching, setFetching] = useState(true);
@@ -23,7 +26,12 @@ export default function WishlistPage() {
   }, [user]);
 
   if (loading || fetching) {
-    return <div className="max-w-7xl mx-auto px-4 py-20 text-center text-gray-400">Loading...</div>;
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="skeleton h-7 rounded-md w-48 mb-8" />
+        <ProductGridSkeleton className="grid grid-cols-2 md:grid-cols-4 gap-6" />
+      </div>
+    );
   }
 
   if (!user) {
