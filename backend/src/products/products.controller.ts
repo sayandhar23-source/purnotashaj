@@ -25,13 +25,16 @@ export class ProductsController {
   @Get()
   findAll(
     @Query('category') category?: string,
-    @Query('categories') categories?: string, // comma-separated ids (category + its subcategories)
+    @Query('categories') categories?: string,
     @Query('search') search?: string,
     @Query('featured') featured?: string,
     @Query('newArrival') newArrival?: string,
     @Query('bestSeller') bestSeller?: string,
     @Query('hotDeal') hotDeal?: string,
     @Query('excludeId') excludeId?: string,
+    @Query('sort') sort?: string,
+    @Query('priceMin') priceMin?: string,
+    @Query('priceMax') priceMax?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
@@ -44,6 +47,9 @@ export class ProductsController {
       bestSeller,
       hotDeal,
       excludeId,
+      sort,
+      priceMin: priceMin ? Number(priceMin) : undefined,
+      priceMax: priceMax ? Number(priceMax) : undefined,
       page: page ? Number(page) : undefined,
       limit: limit ? Number(limit) : undefined,
     });
