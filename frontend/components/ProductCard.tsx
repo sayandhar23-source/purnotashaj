@@ -4,9 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { Heart } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { api } from '@/lib/api';
-import { useAuth } from '@/lib/auth-context';
+import { useWishlist } from '@/lib/wishlist-context';
 
 export type ProductSummary = {
   _id: string;
@@ -25,7 +23,7 @@ export type ProductSummary = {
 };
 
 export default function ProductCard({ product }: { product: ProductSummary }) {
-  const { user } = useAuth();
+  const { isWishlisted, toggle } = useWishlist();
   const [activeImage, setActiveImage] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -55,18 +53,11 @@ export default function ProductCard({ product }: { product: ProductSummary }) {
       ? Math.round(((product.compareAtPrice - product.basePrice) / product.compareAtPrice) * 100)
       : null;
 
-  const toggleWishlist = async (e: React.MouseEvent) => {
+  const wishlisted = isWishlisted(product._id);
+
+  const handleWishlistClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!user) {
-      toast.error('Please log in to save items to your wishlist.');
-      return;
-    }
-    try {
-      await api.post('/wishlist/toggle', { productId: product._id });
-      toast.success('Wishlist updated');
-    } catch {
-      toast.error('Could not update wishlist.');
-    }
+    toggle(product._id);
   };
 
   return (
@@ -112,11 +103,11 @@ export default function ProductCard({ product }: { product: ProductSummary }) {
           </div>
         )}
         <button
-          onClick={toggleWishlist}
+          onClick={handleWishlistClick}
           className="absolute top-3 right-3 bg-white/90 rounded-full p-2 hover:bg-white"
-          aria-label="Add to wishlist"
+          aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-          <Heart size={16} />
+          <Heart size={16} className={wishlisted ? 'fill-red-500 text-red-500' : 'text-gray-700'} />
         </button>
       </div>
       <div className="mt-3">
