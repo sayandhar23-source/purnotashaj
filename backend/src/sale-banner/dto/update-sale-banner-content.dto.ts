@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsIn, IsOptional, IsString } from 'class-validator';
 
 export class UpdateSaleBannerContentDto {
   @IsOptional()
@@ -24,4 +24,8 @@ export class UpdateSaleBannerContentDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @IsOptional()
+  @IsIn(['festive-sale', 'normal-day', 'independence-day', 'durga-puja'])
+  activeTemplate?: string;
 }
