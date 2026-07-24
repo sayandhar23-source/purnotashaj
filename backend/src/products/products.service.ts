@@ -69,6 +69,9 @@ export class ProductsService {
     bestSeller?: string;
     hotDeal?: string;
     excludeId?: string;
+    sort?: string; // 'newest' | 'price-asc' | 'price-desc'
+    priceMin?: number;
+    priceMax?: number;
     page?: number;
     limit?: number;
   }) {
@@ -84,6 +87,18 @@ export class ProductsService {
     if (query.hotDeal === 'true') filter.isHotDeal = true;
     if (query.search) filter.title = { $regex: query.search, $options: 'i' };
     if (query.excludeId) filter._id = { $ne: query.excludeId };
+    if (query.priceMin != null || query.priceMax != null) {
+      filter.basePrice = {};
+      if (query.priceMin != null) filter.basePrice.$gte = query.priceMin;
+      if (query.priceMax != null) filter.basePrice.$lte = query.priceMax;
+    }
+
+    const sortMap: Record<string, any> = {
+      newest: { createdAt: -1 },
+      'price-asc': { basePrice: 1 },
+      'price-desc': { basePrice: -1 },
+    };
+    const sortBy = sortMap[query.sort || 'newest'] || sortMap.newest;
 
     const page = query.page || 1;
     const limit = query.limit || 20;
@@ -93,7 +108,7 @@ export class ProductsService {
       this.productModel
         .find(filter)
         .populate('category')
-        .sort({ createdAt: -1 })
+        .sort(sortBy)
         .skip(skip)
         .limit(limit),
       this.productModel.countDocuments(filter),
