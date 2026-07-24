@@ -29,6 +29,7 @@ export default async function SalePage() {
     <div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
         <TempleSaleBanner
+          template={bannerContent?.activeTemplate}
           heroTitle={bannerContent?.pageTitle || 'Rath Yatra Sale'}
           heroSubtitle={bannerContent?.pageSubtitle}
           showCta={false}
