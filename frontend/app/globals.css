@@ -83,3 +83,15 @@ body { @apply bg-white text-gray-900; }
   0% { opacity: 0; transform: translateY(16px); }
   100% { opacity: 1; transform: translateY(0); }
 }
+
+/* Shimmer loading skeleton — a light band sweeping across a gray block */
+@keyframes shimmerSweep {
+  0% { background-position: -150% 0; }
+  100% { background-position: 150% 0; }
+}
+.skeleton {
+  background-color: #e5e7eb;
+  background-image: linear-gradient(90deg, transparent 40%, rgba(255, 255, 255, 0.6) 50%, transparent 60%);
+  background-size: 250% 100%;
+  animation: shimmerSweep 1.8s ease-in-out infinite;
+}
