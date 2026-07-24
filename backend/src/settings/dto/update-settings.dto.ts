@@ -23,4 +23,8 @@ export class UpdateSettingsDto {
   @IsOptional()
   @IsString()
   pinterestUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  telegramChatId?: string;
 }
