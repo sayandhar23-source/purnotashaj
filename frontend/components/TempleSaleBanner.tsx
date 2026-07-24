@@ -29,79 +29,49 @@ export default function TempleSaleBanner({
   });
 
   return (
-    <div className="rounded-2xl overflow-hidden">
-      {/* Desktop: text panel on the left, artwork panel on the right, side by side */}
-      <div className="hidden md:flex" style={{ backgroundColor: config.leftBg }}>
-        <div className="w-[55%] flex flex-col justify-center px-14 py-10">
-          <span
-            className="text-xs font-semibold tracking-widest"
-            style={{ color: config.eyebrowColor, ...textStyle(0) }}
+    // One layout at every breakpoint: text on the left, artwork on the right.
+    // Height is intentionally compact (roughly 60% of the original full-size
+    // banner) via a shorter aspect ratio per breakpoint rather than letting
+    // content stack and grow tall.
+    <div
+      className="rounded-2xl overflow-hidden flex aspect-[3/2] sm:aspect-[16/6] md:aspect-[5/1]"
+      style={{ backgroundColor: config.leftBg }}
+    >
+      <div className="w-[55%] flex flex-col justify-center px-4 sm:px-8 md:px-12 py-2">
+        <span
+          className="text-[9px] sm:text-[11px] font-semibold tracking-widest"
+          style={{ color: config.eyebrowColor, ...textStyle(0) }}
+        >
+          {config.eyebrow}
+        </span>
+        <h2
+          className="text-base sm:text-xl md:text-2xl lg:text-3xl font-serif font-semibold mt-0.5 sm:mt-1 leading-tight"
+          style={{ color: config.titleColor, ...textStyle(0.15) }}
+        >
+          {heroTitle}
+        </h2>
+        {heroSubtitle && (
+          <p
+            className="mt-1 text-[10px] sm:text-xs md:text-sm line-clamp-2"
+            style={{ color: config.subtitleColor, ...textStyle(0.3) }}
           >
-            {config.eyebrow}
-          </span>
-          <h2
-            className="text-3xl lg:text-4xl font-serif font-semibold mt-2"
-            style={{ color: config.titleColor, ...textStyle(0.15) }}
-          >
-            {heroTitle}
-          </h2>
-          {heroSubtitle && (
-            <p className="mt-3 text-base" style={{ color: config.subtitleColor, ...textStyle(0.3) }}>
-              {heroSubtitle}
-            </p>
-          )}
-          {showCta && ctaText && (
-            <div style={textStyle(0.45)}>
-              <Link
-                href={ctaHref}
-                className="mt-5 inline-block w-fit px-6 py-3 rounded-full text-sm font-semibold"
-                style={{ backgroundColor: config.ctaBg, color: config.ctaText }}
-              >
-                {ctaText}
-              </Link>
-            </div>
-          )}
-        </div>
-        <div className="relative w-[45%] aspect-[306/280]">
-          <Art />
-        </div>
+            {heroSubtitle}
+          </p>
+        )}
+        {showCta && ctaText && (
+          <div style={textStyle(0.45)}>
+            <Link
+              href={ctaHref}
+              className="mt-1.5 sm:mt-3 inline-block w-fit px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full text-[10px] sm:text-xs md:text-sm font-semibold"
+              style={{ backgroundColor: config.ctaBg, color: config.ctaText }}
+            >
+              {ctaText}
+            </Link>
+          </div>
+        )}
       </div>
-
-      {/* Mobile: artwork on top, text stacked below — avoids any collision at small sizes */}
-      <div className="md:hidden" style={{ backgroundColor: config.leftBg }}>
-        <div className="relative aspect-[16/9]">
-          <Art />
-        </div>
-        <div className="px-6 py-6 text-center">
-          <span
-            className="text-[11px] font-semibold tracking-widest"
-            style={{ color: config.eyebrowColor, ...textStyle(0) }}
-          >
-            {config.eyebrow}
-          </span>
-          <h2
-            className="text-xl font-serif font-semibold mt-1"
-            style={{ color: config.titleColor, ...textStyle(0.15) }}
-          >
-            {heroTitle}
-          </h2>
-          {heroSubtitle && (
-            <p className="mt-2 text-sm" style={{ color: config.subtitleColor, ...textStyle(0.3) }}>
-              {heroSubtitle}
-            </p>
-          )}
-          {showCta && ctaText && (
-            <div style={textStyle(0.45)}>
-              <Link
-                href={ctaHref}
-                className="mt-4 inline-block px-6 py-3 rounded-full text-sm font-semibold"
-                style={{ backgroundColor: config.ctaBg, color: config.ctaText }}
-              >
-                {ctaText}
-              </Link>
-            </div>
-          )}
-        </div>
+      <div className="relative w-[45%]">
+        <Art />
       </div>
     </div>
   );
