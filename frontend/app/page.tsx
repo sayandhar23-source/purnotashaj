@@ -60,6 +60,7 @@ export default async function HomePage() {
       {bannerContent?.isActive !== false && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
           <TempleSaleBanner
+            template={bannerContent?.activeTemplate}
             heroTitle={bannerContent?.heroTitle || 'Jagannath Rath Yatra Sale'}
             heroSubtitle={bannerContent?.heroSubtitle}
             ctaText={bannerContent?.ctaText || 'Shop the sale'}
