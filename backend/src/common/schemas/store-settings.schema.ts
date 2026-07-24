@@ -21,6 +21,12 @@ export class StoreSettings {
 
   @Prop({ default: '' })
   pinterestUrl: string;
+
+  // Live chat widget relays visitor messages to this Telegram chat.
+  // The bot token itself lives in the backend env var TELEGRAM_BOT_TOKEN,
+  // not here — same pattern as other API keys (Stripe, Resend, etc.).
+  @Prop({ default: '' })
+  telegramChatId: string;
 }
 
 export const StoreSettingsSchema = SchemaFactory.createForClass(StoreSettings);
