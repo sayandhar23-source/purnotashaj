@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
 import { SALE_BANNER_TEMPLATES, SaleBannerTemplateId } from '@/components/sale-banner-templates/config';
+import { useDocumentTitle } from '@/lib/useDocumentTitle';
 
 export default function AdminSalePagePage() {
+  useDocumentTitle('Admin · Sale Page');
   const [content, setContent] = useState({
     heroTitle: '',
     heroSubtitle: '',
@@ -93,7 +95,20 @@ export default function AdminSalePagePage() {
   );
 
   if (loading) {
-    return <p className="text-gray-400 text-sm">Loading...</p>;
+    return (
+      <div className="space-y-4 max-w-2xl">
+        <div className="skeleton h-7 rounded-md w-40" />
+        <div className="card p-6 space-y-3">
+          <div className="skeleton h-4 rounded-md w-32" />
+          <div className="skeleton h-9 rounded-lg w-full" />
+          <div className="skeleton h-9 rounded-lg w-full" />
+        </div>
+        <div className="card p-6 space-y-3">
+          <div className="skeleton h-4 rounded-md w-40" />
+          <div className="skeleton h-24 rounded-lg w-full" />
+        </div>
+      </div>
+    );
   }
 
   return (
