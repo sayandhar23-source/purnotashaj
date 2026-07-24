@@ -36,7 +36,7 @@ export default async function SalePage() {
         />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div id="products" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 scroll-mt-20">
         {products.length === 0 ? (
           <p className="text-gray-500 text-sm">
             Nothing on sale right now — check back soon.
