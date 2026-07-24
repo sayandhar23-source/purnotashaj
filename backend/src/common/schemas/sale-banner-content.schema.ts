@@ -24,6 +24,9 @@ export class SaleBannerContent {
 
   @Prop({ default: true })
   isActive: boolean; // turn the whole homepage banner off without deleting the content
+
+  @Prop({ default: 'festive-sale' })
+  activeTemplate: string; // 'festive-sale' | 'normal-day' | 'independence-day' | 'durga-puja'
 }
 
 export const SaleBannerContentSchema = SchemaFactory.createForClass(SaleBannerContent);
