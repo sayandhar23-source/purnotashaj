@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { Pencil, Trash2, Plus, ArrowLeft, ImageOff } from 'lucide-react';
 import { api } from '@/lib/api';
 import ProductForm from '@/components/admin/ProductForm';
+import { useDocumentTitle } from '@/lib/useDocumentTitle';
 
 // Collect a category node's id plus every descendant id, so selecting "Jewellery"
 // shows products filed under any of its subcategories too.
@@ -16,6 +17,7 @@ function collectIds(node: any): string[] {
 }
 
 export default function AdminProductsPage() {
+  useDocumentTitle('Admin · Products');
   const [view, setView] = useState<'browse' | 'form'>('browse');
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
 
@@ -157,7 +159,17 @@ export default function AdminProductsPage() {
       )}
 
       {loading ? (
-        <p className="text-gray-400 text-sm">Loading products...</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div key={i} className="card overflow-hidden">
+              <div className="skeleton aspect-square" />
+              <div className="p-3">
+                <div className="skeleton h-3 rounded-md w-4/5 mb-2" />
+                <div className="skeleton h-3 rounded-md w-2/5" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : visibleProducts.length === 0 ? (
         <p className="text-gray-500 text-sm">No products in this category yet.</p>
       ) : (
