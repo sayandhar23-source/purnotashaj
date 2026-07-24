@@ -2,14 +2,13 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import toast from 'react-hot-toast';
 import { Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import ProductCard, { ProductSummary } from '@/components/ProductCard';
-import { useAuth } from '@/lib/auth-context';
-import { api } from '@/lib/api';
 import { getVideoInfo } from '@/lib/video';
 import SaleCountdown from '@/components/SaleCountdown';
+import { useWishlist } from '@/lib/wishlist-context';
+import Breadcrumbs, { Crumb } from '@/components/Breadcrumbs';
 
 type Variant = {
   _id: string;
@@ -45,17 +44,20 @@ export default function ProductDetailClient({
   product,
   related,
   whatsappNumber,
+  breadcrumbItems,
 }: {
   product: Product;
   related?: ProductSummary[];
   whatsappNumber: string;
+  breadcrumbItems?: Crumb[];
 }) {
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(
     product.variants?.[0] || null,
   );
   const [activeImage, setActiveImage] = useState(0);
   const [qty, setQty] = useState(1);
-  const { user } = useAuth();
+  const { isWishlisted, toggle } = useWishlist();
+  const wishlisted = isWishlisted(product._id);
 
   const onSale = !selectedVariant && !!product.saleInfo?.isActive;
   const price = onSale
@@ -69,19 +71,6 @@ export default function ProductDetailClient({
       ? selectedVariant.compareAtPrice
       : product.compareAtPrice;
   const images = selectedVariant?.image ? [selectedVariant.image, ...product.images] : product.images;
-
-  const handleWishlist = async () => {
-    if (!user) {
-      toast.error('Please log in to save items to your wishlist.');
-      return;
-    }
-    try {
-      await api.post('/wishlist/toggle', { productId: product._id });
-      toast.success('Wishlist updated');
-    } catch {
-      toast.error('Could not update wishlist.');
-    }
-  };
 
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const videoInfo = getVideoInfo(product.videoUrl);
@@ -103,7 +92,10 @@ export default function ProductDetailClient({
 
   return (
     <>
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid md:grid-cols-2 gap-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      {breadcrumbItems && <Breadcrumbs items={breadcrumbItems} />}
+    </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 grid md:grid-cols-2 gap-10">
       <div>
         <div
           className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 select-none"
@@ -232,8 +224,8 @@ export default function ProductDetailClient({
               </button>
             </div>
           </div>
-          <button onClick={handleWishlist} className="border rounded-full p-2.5 self-end" aria-label="Wishlist">
-            <Heart size={20} />
+          <button onClick={() => toggle(product._id)} className="border rounded-full p-2.5 self-end" aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}>
+            <Heart size={20} className={wishlisted ? 'fill-red-500 text-red-500' : ''} />
           </button>
         </div>
 
