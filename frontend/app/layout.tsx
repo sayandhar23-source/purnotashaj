@@ -6,6 +6,7 @@ import { WishlistProvider } from '@/lib/wishlist-context';
 import { Toaster } from 'react-hot-toast';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import LiveChatWidget from '@/components/LiveChatWidget';
 
 export const metadata: Metadata = {
   title: 'Purnota Shaj',
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Navbar />
               <main className="min-h-screen">{children}</main>
               <Footer />
+              <LiveChatWidget />
               <Toaster position="top-center" />
             </WishlistProvider>
           </CartProvider>
