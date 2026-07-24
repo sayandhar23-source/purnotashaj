@@ -9,6 +9,18 @@ export type StoreSettingsDocument = StoreSettings & Document;
 export class StoreSettings {
   @Prop({ default: '' })
   whatsappNumber: string; // digits only, with country code, no + — e.g. 919999999999
+
+  @Prop({ default: '' })
+  instagramUrl: string;
+
+  @Prop({ default: '' })
+  facebookUrl: string;
+
+  @Prop({ default: '' })
+  youtubeUrl: string;
+
+  @Prop({ default: '' })
+  pinterestUrl: string;
 }
 
 export const StoreSettingsSchema = SchemaFactory.createForClass(StoreSettings);
