@@ -25,10 +25,10 @@ export default function ProductRow({
         </Link>
       </div>
 
-      {/* Horizontal swipeable row on mobile/tablet; wraps to a grid on large screens */}
-      <div className="flex lg:grid lg:grid-cols-5 gap-4 sm:gap-6 overflow-x-auto lg:overflow-visible pb-2 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory">
+      {/* Horizontal swipeable row at every breakpoint, including desktop */}
+      <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-2 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory">
         {products.slice(0, 5).map((p) => (
-          <div key={p._id} className="w-[46%] sm:w-[30%] lg:w-auto shrink-0 lg:shrink snap-start">
+          <div key={p._id} className="w-[46%] sm:w-[30%] lg:w-[220px] shrink-0 snap-start">
             <ProductCard product={p} />
           </div>
         ))}
