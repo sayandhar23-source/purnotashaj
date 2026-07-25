@@ -60,7 +60,7 @@ export default function ProductForm({
           title: editingProduct.title,
           slug: editingProduct.slug,
           description: editingProduct.description || '',
-          category: editingProduct.category?._id || editingProduct.category,
+          category: editingProduct.category?._id || editingProduct.category || '',
           images: editingProduct.images?.length ? editingProduct.images : [''],
           videoUrl: editingProduct.videoUrl || '',
           basePrice: editingProduct.basePrice,
