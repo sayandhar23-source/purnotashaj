@@ -10,8 +10,8 @@ export class CategoriesController {
   constructor(private categoriesService: CategoriesService) {}
 
   @Get()
-  findAll() {
-    return this.categoriesService.findAll();
+  findAll(@Query('hasProducts') hasProducts?: string) {
+    return hasProducts === 'true' ? this.categoriesService.findAllWithProducts() : this.categoriesService.findAll();
   }
 
   @Get('children')
