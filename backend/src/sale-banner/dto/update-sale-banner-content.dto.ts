@@ -26,6 +26,11 @@ export class UpdateSaleBannerContentDto {
   isActive?: boolean;
 
   @IsOptional()
-  @IsIn(['festive-sale', 'normal-day', 'independence-day', 'durga-puja'])
+  @IsIn([
+    'festive-sale', 'normal-day', 'independence-day', 'durga-puja',
+    'diwali', 'new-year', 'bridal', 'monsoon', 'summer', 'winter',
+    'valentine', 'holi', 'eid', 'christmas',
+    'mega-sale', 'new-arrivals', 'free-shipping', 'best-sellers', 'vip',
+  ])
   activeTemplate?: string;
 }
