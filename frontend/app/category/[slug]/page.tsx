@@ -3,7 +3,14 @@ import Link from 'next/link';
 import ProductCard, { ProductSummary } from '@/components/ProductCard';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import SortFilterBar from '@/components/SortFilterBar';
+import CategorySidebarTree from '@/components/CategorySidebarTree';
 import { findNodeWithAncestors, collectIds } from '@/lib/categoryTree';
+
+// Always fetch fresh — prevents Next.js's client-side route cache from ever
+// showing a previous category's products when navigating quickly between
+// categories (most noticeable on mobile, tapping through the sidebar fast).
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const API = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api').replace(/\/+$/, '');
 
@@ -62,12 +69,13 @@ export default async function CategoryPage({
   const category = found?.node;
   const ancestors: any[] = found?.ancestors || [];
   const parent = ancestors[ancestors.length - 1];
-  const ownChildren: any[] = category?.children || [];
-  const siblings: any[] = parent?.children || [];
 
-  const sidebarRoot = ownChildren.length > 0 ? category : parent;
-  const sidebarItems = ownChildren.length > 0 ? ownChildren : siblings;
-  const showSidebar = !!sidebarRoot && sidebarItems.length > 0;
+  // The sidebar always shows the WHOLE branch from its top-level root down —
+  // e.g. viewing "Jamdani" still shows the full Saree > Cotton Saree > Jamdani
+  // > Jamdani Cotton tree, with the active path expanded, so you can jump
+  // anywhere in that category family without going back up one level at a time.
+  const sidebarRoot = ancestors[0] || category;
+  const showSidebar = !!sidebarRoot && (sidebarRoot.children?.length || 0) > 0;
 
   const categoryIds = category ? collectIds(category) : [];
   const { products, total } = await getProductsByCategoryIds(categoryIds, searchParams);
@@ -92,37 +100,13 @@ export default async function CategoryPage({
       </h1>
       {category?.description && <p className="text-gray-500 mb-6">{category.description}</p>}
 
-      <div className={showSidebar ? 'md:grid md:grid-cols-[200px_1fr] md:gap-8' : ''}>
+      <div className={showSidebar ? 'md:grid md:grid-cols-[220px_1fr] md:gap-8' : ''}>
         {showSidebar && (
           <aside className="md:sticky md:top-20 md:h-fit mb-6 md:mb-0">
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">
               Filter by
             </p>
-            <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
-              <Link
-                href={`/category/${sidebarRoot.slug}`}
-                className={`shrink-0 min-w-fit px-4 py-2 rounded-full md:rounded-lg border text-sm font-medium whitespace-nowrap ${
-                  category?.slug === sidebarRoot.slug
-                    ? 'border-brand-500 bg-brand-50 text-brand-600'
-                    : 'border-gray-300 text-gray-600 hover:border-brand-400'
-                }`}
-              >
-                All {sidebarRoot.name}
-              </Link>
-              {sidebarItems.map((sub: any) => (
-                <Link
-                  key={sub._id}
-                  href={`/category/${sub.slug}`}
-                  className={`shrink-0 min-w-fit px-4 py-2 rounded-full md:rounded-lg border text-sm whitespace-nowrap ${
-                    category?.slug === sub.slug
-                      ? 'border-brand-500 bg-brand-50 text-brand-600 font-medium'
-                      : 'border-gray-300 text-gray-600 hover:border-brand-400 hover:text-brand-600'
-                  }`}
-                >
-                  {sub.name}
-                </Link>
-              ))}
-            </div>
+            <CategorySidebarTree root={sidebarRoot} activeSlug={params.slug} />
           </aside>
         )}
 
