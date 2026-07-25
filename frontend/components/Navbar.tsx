@@ -23,7 +23,7 @@ export default function Navbar() {
 
   useEffect(() => {
     api
-      .get('/categories')
+      .get('/categories', { params: { hasProducts: 'true' } })
       .then((res) => setCategories(res.data))
       .catch(() => setCategories([]));
   }, []);
