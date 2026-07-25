@@ -16,7 +16,7 @@ async function safeJson(url: string) {
 }
 
 async function getCategoryTree() {
-  const data = await safeJson(`${API}/categories`);
+  const data = await safeJson(`${API}/categories?hasProducts=true`);
   return data || [];
 }
 
