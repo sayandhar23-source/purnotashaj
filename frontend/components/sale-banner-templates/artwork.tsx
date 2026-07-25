@@ -129,3 +129,257 @@ export function DurgaPujaArt() {
     </svg>
   );
 }
+
+export function DiwaliArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#14284A" />
+      <circle cx="153" cy="140" r="95" fill="none" stroke="#D4A024" strokeWidth="1" opacity="0.35" />
+      <circle cx="153" cy="140" r="65" fill="none" stroke="#D4A024" strokeWidth="1" opacity="0.35" />
+      <g fill="#D4A024" opacity="0.5">
+        <circle cx="153" cy="55" r="4" /><circle cx="226" cy="90" r="4" /><circle cx="226" cy="190" r="4" />
+        <circle cx="153" cy="225" r="4" /><circle cx="80" cy="190" r="4" /><circle cx="80" cy="90" r="4" />
+      </g>
+      <g transform="translate(93,150)"><path d="M0 20 Q30 40 60 20 Q45 10 30 10 Q15 10 0 20Z" fill="#B3241F" />
+        <g style={{ transformOrigin: '30px 0px', animation: 'bannerGlow 5s ease-in-out infinite' }}>
+          <path d="M30 8 Q26 -4 30 -14 Q34 -4 30 8Z" fill="#F4A623" />
+        </g>
+      </g>
+      <g transform="translate(123,110)"><path d="M0 16 Q24 32 48 16 Q36 8 24 8 Q12 8 0 16Z" fill="#8A1F1F" />
+        <path d="M24 6 Q21 -3 24 -11 Q27 -3 24 6Z" fill="#F4A623" />
+      </g>
+      <g transform="translate(153,150)"><path d="M0 20 Q30 40 60 20 Q45 10 30 10 Q15 10 0 20Z" fill="#B3241F" />
+        <path d="M30 8 Q26 -4 30 -14 Q34 -4 30 8Z" fill="#F4A623" />
+      </g>
+    </svg>
+  );
+}
+
+export function NewYearArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#1A1A1A" />
+      <g stroke="#D4A024" strokeWidth="2" opacity="0.8">
+        <line x1="153" y1="80" x2="153" y2="200" /><line x1="93" y1="140" x2="213" y2="140" />
+        <line x1="111" y1="98" x2="195" y2="182" /><line x1="111" y1="182" x2="195" y2="98" />
+      </g>
+      <g style={{ transformOrigin: '153px 140px', animation: 'bannerGlow 5s ease-in-out infinite' }}>
+        <circle cx="153" cy="140" r="6" fill="#D4A024" />
+      </g>
+      <g fill="#D4A024">
+        <circle cx="106" cy="90" r="3" /><circle cx="201" cy="95" r="3" /><circle cx="216" cy="180" r="3" />
+        <circle cx="91" cy="185" r="3" /><circle cx="226" cy="140" r="2.5" /><circle cx="80" cy="140" r="2.5" />
+      </g>
+      <rect x="126" y="70" width="4" height="14" rx="2" fill="#F4E4C1" transform="rotate(30 128 77)" />
+      <rect x="181" y="200" width="4" height="14" rx="2" fill="#F4E4C1" transform="rotate(-20 183 207)" />
+    </svg>
+  );
+}
+
+export function BridalArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#EFC9CB" />
+      <g style={{ transformOrigin: '153px 95px', animation: 'bannerGlow 5s ease-in-out infinite' }}>
+        <circle cx="153" cy="95" r="10" fill="#C08A5A" />
+      </g>
+      <path d="M143 100 Q153 130 163 100" stroke="#C08A5A" strokeWidth="2" fill="none" />
+      <path d="M131 130 Q153 165 175 130 Q164 118 153 118 Q142 118 131 130Z" fill="#C08A5A" />
+      <g fill="#C08A5A"><circle cx="136" cy="175" r="3" /><circle cx="153" cy="182" r="3" /><circle cx="170" cy="175" r="3" /></g>
+      <path d="M86 60 Q96 45 106 60 Q96 75 86 60Z" fill="#D98C99" opacity="0.7" />
+      <path d="M206 210 Q216 195 226 210 Q216 225 206 210Z" fill="#D98C99" opacity="0.7" />
+    </svg>
+  );
+}
+
+export function MonsoonArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#156363" />
+      <path d="M106 100 Q153 60 200 100 L200 108 L106 108 Z" fill="#F4A623" />
+      <line x1="153" y1="60" x2="153" y2="50" stroke="#F4A623" strokeWidth="3" />
+      <path d="M153 108 L153 170 Q153 180 143 180" stroke="#2E2E2E" strokeWidth="3" fill="none" />
+      <g fill="#8FD6D6" opacity="0.8">
+        <g style={{ animation: 'bannerCloudDriftA 5s ease-in-out infinite' }}><path d="M76 60 q6 10 0 16 q-6 -6 0 -16Z" /></g>
+        <g style={{ animation: 'bannerCloudDriftB 5s ease-in-out infinite' }}><path d="M226 70 q6 10 0 16 q-6 -6 0 -16Z" /></g>
+        <g style={{ animation: 'bannerCloudDriftA 5s ease-in-out infinite' }}><path d="M66 150 q6 10 0 16 q-6 -6 0 -16Z" /></g>
+        <g style={{ animation: 'bannerCloudDriftB 5s ease-in-out infinite' }}><path d="M236 160 q6 10 0 16 q-6 -6 0 -16Z" /></g>
+        <path d="M96 210 q6 10 0 16 q-6 -6 0 -16Z" /><path d="M206 220 q6 10 0 16 q-6 -6 0 -16Z" />
+      </g>
+    </svg>
+  );
+}
+
+export function SummerArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#F4C430" />
+      <g style={{ transformOrigin: '153px 130px', animation: 'bannerGlow 5s ease-in-out infinite' }}>
+        <circle cx="153" cy="130" r="38" fill="#fff" opacity="0.9" />
+      </g>
+      <g stroke="#fff" strokeWidth="4" opacity="0.9">
+        <line x1="153" y1="70" x2="153" y2="55" /><line x1="153" y1="190" x2="153" y2="205" />
+        <line x1="93" y1="130" x2="78" y2="130" /><line x1="213" y1="130" x2="228" y2="130" />
+        <line x1="111" y1="88" x2="101" y2="78" /><line x1="195" y1="172" x2="205" y2="182" />
+        <line x1="111" y1="172" x2="101" y2="182" /><line x1="195" y1="88" x2="205" y2="78" />
+      </g>
+      <g transform="translate(76,220)"><circle r="6" fill="#E85D3D" /><circle cx="10" cy="-4" r="6" fill="#fff" opacity="0.85" /><circle cx="-10" cy="-4" r="6" fill="#fff" opacity="0.85" /><circle cx="0" cy="-14" r="6" fill="#fff" opacity="0.85" /></g>
+      <g transform="translate(226,60)"><circle r="5" fill="#E85D3D" /><circle cx="8" cy="-3" r="5" fill="#fff" opacity="0.85" /><circle cx="-8" cy="-3" r="5" fill="#fff" opacity="0.85" /><circle cx="0" cy="-11" r="5" fill="#fff" opacity="0.85" /></g>
+    </svg>
+  );
+}
+
+export function WinterArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#2E5C8A" />
+      <g stroke="#DCEEFB" strokeWidth="2" strokeLinecap="round">
+        <g style={{ transformOrigin: '116px 110px', animation: 'bannerCloudDriftA 5s ease-in-out infinite' }} transform="translate(116,110)"><line x1="-22" y1="0" x2="22" y2="0" /><line x1="0" y1="-22" x2="0" y2="22" /><line x1="-15" y1="-15" x2="15" y2="15" /><line x1="-15" y1="15" x2="15" y2="-15" /></g>
+        <g style={{ transformOrigin: '201px 160px', animation: 'bannerCloudDriftB 5s ease-in-out infinite' }} transform="translate(201,160) scale(0.6)"><line x1="-22" y1="0" x2="22" y2="0" /><line x1="0" y1="-22" x2="0" y2="22" /><line x1="-15" y1="-15" x2="15" y2="15" /><line x1="-15" y1="15" x2="15" y2="-15" /></g>
+        <g transform="translate(76,200) scale(0.5)"><line x1="-22" y1="0" x2="22" y2="0" /><line x1="0" y1="-22" x2="0" y2="22" /><line x1="-15" y1="-15" x2="15" y2="15" /><line x1="-15" y1="15" x2="15" y2="-15" /></g>
+        <g transform="translate(226,70) scale(0.4)"><line x1="-22" y1="0" x2="22" y2="0" /><line x1="0" y1="-22" x2="0" y2="22" /><line x1="-15" y1="-15" x2="15" y2="15" /><line x1="-15" y1="15" x2="15" y2="-15" /></g>
+      </g>
+    </svg>
+  );
+}
+
+export function ValentineArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#C94F6D" />
+      <g style={{ transformOrigin: '153px 140px', animation: 'bannerGlow 5s ease-in-out infinite' }}>
+        <path d="M153 175 C126 150, 116 120, 136 105 C146 97, 153 105, 153 115 C153 105, 160 97, 170 105 C190 120, 180 150, 153 175 Z" fill="#fff" opacity="0.95" />
+      </g>
+      <path d="M86 90 C76 80, 71 68, 81 60 C86 56, 90 60, 90 65 C90 60, 94 56, 99 60 C109 68, 104 80, 86 90 Z" fill="#fff" opacity="0.6" />
+      <path d="M221 200 C214 193, 211 185, 218 179 C221 176, 224 179, 224 182 C224 179, 227 176, 230 179 C237 185, 234 193, 221 200 Z" fill="#fff" opacity="0.6" />
+    </svg>
+  );
+}
+
+export function HoliArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#FDEDD9" />
+      <circle cx="126" cy="110" r="30" fill="#E85D3D" opacity="0.85" />
+      <circle cx="186" cy="90" r="24" fill="#2E7D6B" opacity="0.85" />
+      <circle cx="216" cy="160" r="28" fill="#4A6FD4" opacity="0.85" />
+      <circle cx="136" cy="190" r="22" fill="#F4C430" opacity="0.85" />
+      <circle cx="86" cy="160" r="18" fill="#C94F6D" opacity="0.85" />
+      <g fill="#fff" opacity="0.7">
+        <circle cx="96" cy="80" r="3" /><circle cx="246" cy="120" r="3" /><circle cx="66" cy="200" r="3" /><circle cx="226" cy="220" r="3" />
+      </g>
+    </svg>
+  );
+}
+
+export function EidArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#175443" />
+      <g style={{ transformOrigin: '186px 118px', animation: 'bannerGlow 5s ease-in-out infinite' }}>
+        <path d="M186 90 A28 28 0 1 0 186 146 A22 22 0 1 1 186 90 Z" fill="#D4A024" />
+      </g>
+      <g fill="#D4A024"><circle cx="116" cy="80" r="2.5" /><circle cx="236" cy="100" r="2" /><circle cx="226" cy="60" r="1.8" /></g>
+      <line x1="106" y1="130" x2="106" y2="150" stroke="#D4A024" strokeWidth="2" />
+      <path d="M88 150 L124 150 L118 200 Q106 210 94 200 Z" fill="none" stroke="#D4A024" strokeWidth="2" />
+      <line x1="88" y1="165" x2="124" y2="165" stroke="#D4A024" strokeWidth="1.5" />
+      <circle cx="106" cy="185" r="4" fill="#D4A024" />
+    </svg>
+  );
+}
+
+export function ChristmasArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#8B1A1A" />
+      <line x1="153" y1="70" x2="153" y2="85" stroke="#D4A024" strokeWidth="2" />
+      <rect x="145" y="63" width="16" height="8" rx="2" fill="#D4A024" />
+      <g style={{ transformOrigin: '153px 130px', animation: 'bannerGlow 5s ease-in-out infinite' }}>
+        <circle cx="153" cy="130" r="38" fill="#0D3320" />
+        <path d="M153 92 Q186 130 153 168 Q120 130 153 92Z" fill="#D4A024" opacity="0.3" />
+      </g>
+      <g stroke="#fff" strokeWidth="1.5" opacity="0.85">
+        <g transform="translate(86,200) scale(0.5)"><line x1="-22" y1="0" x2="22" y2="0" /><line x1="0" y1="-22" x2="0" y2="22" /><line x1="-15" y1="-15" x2="15" y2="15" /><line x1="-15" y1="15" x2="15" y2="-15" /></g>
+        <g transform="translate(226,90) scale(0.4)"><line x1="-22" y1="0" x2="22" y2="0" /><line x1="0" y1="-22" x2="0" y2="22" /><line x1="-15" y1="-15" x2="15" y2="15" /><line x1="-15" y1="15" x2="15" y2="-15" /></g>
+      </g>
+    </svg>
+  );
+}
+
+export function MegaSaleArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#F4C430" />
+      <g style={{ transformOrigin: '153px 130px', animation: 'bannerGlow 5s ease-in-out infinite' }} transform="translate(126,90) rotate(-12)">
+        <path d="M0 20 L60 20 L90 50 L60 80 L0 80 Z" fill="#111111" />
+        <circle cx="20" cy="50" r="8" fill="#F4C430" />
+      </g>
+      <text x="153" y="200" fontSize="34" fontWeight="700" fill="#111111" textAnchor="middle" fontFamily="Georgia, serif">%</text>
+    </svg>
+  );
+}
+
+export function NewArrivalsArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#DCE3D3" />
+      <g fill="none" stroke="#5C7A5C" strokeWidth="1.6">
+        <path d="M153 220 L153 90" />
+        <path d="M153 190 Q186 175 196 145" />
+        <path d="M153 160 Q120 145 110 115" />
+        <path d="M153 130 Q181 118 188 95" />
+        <path d="M153 110 Q125 100 118 78" />
+      </g>
+      <g fill="#5C7A5C" opacity="0.5">
+        <ellipse cx="196" cy="140" rx="10" ry="5" transform="rotate(-20 196 140)" />
+        <ellipse cx="110" cy="112" rx="10" ry="5" transform="rotate(20 110 112)" />
+        <ellipse cx="188" cy="92" rx="8" ry="4" transform="rotate(-25 188 92)" />
+        <ellipse cx="118" cy="75" rx="8" ry="4" transform="rotate(25 118 75)" />
+      </g>
+    </svg>
+  );
+}
+
+export function FreeShippingArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#2E4FA3" />
+      <g transform="translate(113,100)">
+        <polygon points="40,0 80,20 40,40 0,20" fill="#fff" />
+        <polygon points="0,20 40,40 40,90 0,70" fill="#DCE6FF" />
+        <polygon points="80,20 40,40 40,90 80,70" fill="#B8C9F5" />
+        <line x1="20" y1="10" x2="60" y2="30" stroke="#2E4FA3" strokeWidth="2" />
+      </g>
+      <g style={{ transformOrigin: '246px 90px', animation: 'bannerGlow 5s ease-in-out infinite' }}>
+        <circle cx="246" cy="90" r="16" fill="#F4C430" />
+        <path d="M239 90 L244 96 L254 84" stroke="#2E4FA3" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+    </svg>
+  );
+}
+
+export function BestSellersArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#C96A3D" />
+      <g style={{ transformOrigin: '153px 140px', animation: 'bannerGlow 5s ease-in-out infinite' }} transform="translate(153,140)" fill="#F4C430">
+        <polygon points="0,-55 13,-16 54,-16 21,7 33,46 0,22 -33,46 -21,7 -54,-16 -13,-16" />
+      </g>
+      <circle cx="153" cy="140" r="20" fill="#C96A3D" />
+      <text x="153" y="147" fontSize="18" fontWeight="700" fill="#F4C430" textAnchor="middle">#1</text>
+    </svg>
+  );
+}
+
+export function VipArt() {
+  return (
+    <svg viewBox="0 0 306 280" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full" aria-hidden="true">
+      <rect width="306" height="280" fill="#1A1A1A" />
+      <circle cx="153" cy="140" r="60" fill="none" stroke="#D4A024" strokeWidth="1" opacity="0.4" />
+      <g style={{ transformOrigin: '153px 135px', animation: 'bannerGlow 5s ease-in-out infinite' }} transform="translate(113,120)" fill="none" stroke="#D4A024" strokeWidth="2.5" strokeLinejoin="round">
+        <polygon points="0,30 0,10 20,22 40,5 60,22 80,10 80,30" />
+      </g>
+      <circle cx="113" cy="10" r="3" fill="#D4A024" /><circle cx="153" cy="5" r="3" fill="#D4A024" /><circle cx="193" cy="10" r="3" fill="#D4A024" />
+    </svg>
+  );
+}
