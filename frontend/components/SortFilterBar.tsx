@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal, X } from 'lucide-react';
 
 const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest' },
@@ -49,48 +49,16 @@ export default function SortFilterBar({ resultCount }: { resultCount?: number })
       {resultCount !== undefined && (
         <p className="text-sm text-gray-500">{resultCount} product{resultCount === 1 ? '' : 's'}</p>
       )}
-      <div className="flex items-center gap-2 ml-auto relative">
-        <div className="relative">
-          <button
-            onClick={() => setShowPriceFilter(!showPriceFilter)}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm ${
-              hasPriceFilter ? 'border-brand-500 text-brand-600 bg-brand-50' : 'border-gray-300 text-gray-600'
-            }`}
-          >
-            <SlidersHorizontal size={14} />
-            Price
-          </button>
-          {showPriceFilter && (
-            <div className="absolute right-0 top-full mt-2 z-20 card p-4 w-64">
-              <div className="flex gap-2 mb-3">
-                <input
-                  type="number"
-                  placeholder="Min"
-                  className="input text-sm"
-                  value={priceMin}
-                  onChange={(e) => setPriceMin(e.target.value)}
-                />
-                <input
-                  type="number"
-                  placeholder="Max"
-                  className="input text-sm"
-                  value={priceMax}
-                  onChange={(e) => setPriceMax(e.target.value)}
-                />
-              </div>
-              <div className="flex gap-2">
-                <button onClick={applyPriceFilter} className="btn-primary text-xs px-3 py-1.5 flex-1">
-                  Apply
-                </button>
-                {hasPriceFilter && (
-                  <button onClick={clearPriceFilter} className="btn-outline text-xs px-3 py-1.5">
-                    Clear
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
+      <div className="flex items-center gap-2 ml-auto">
+        <button
+          onClick={() => setShowPriceFilter(true)}
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm ${
+            hasPriceFilter ? 'border-brand-500 text-brand-600 bg-brand-50' : 'border-gray-300 text-gray-600'
+          }`}
+        >
+          <SlidersHorizontal size={14} />
+          Price
+        </button>
 
         <select
           value={currentSort}
@@ -104,6 +72,50 @@ export default function SortFilterBar({ resultCount }: { resultCount?: number })
           ))}
         </select>
       </div>
+
+      {/* Centered modal at every screen size — sidesteps all viewport-overflow
+          math that broke on mobile with the old anchored-dropdown approach. */}
+      {showPriceFilter && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30"
+          onClick={() => setShowPriceFilter(false)}
+        >
+          <div className="card p-5 w-full max-w-xs" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <p className="font-medium text-sm">Filter by price</p>
+              <button onClick={() => setShowPriceFilter(false)} aria-label="Close">
+                <X size={18} className="text-gray-400" />
+              </button>
+            </div>
+            <div className="flex gap-2 mb-4">
+              <input
+                type="number"
+                placeholder="Min"
+                className="input text-sm min-w-0"
+                value={priceMin}
+                onChange={(e) => setPriceMin(e.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="Max"
+                className="input text-sm min-w-0"
+                value={priceMax}
+                onChange={(e) => setPriceMax(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-2">
+              <button onClick={applyPriceFilter} className="btn-primary text-sm flex-1">
+                Apply
+              </button>
+              {hasPriceFilter && (
+                <button onClick={clearPriceFilter} className="btn-outline text-sm">
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
