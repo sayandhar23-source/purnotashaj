@@ -92,6 +92,7 @@ export default function AdminProductsPage() {
           {editingProduct ? `Edit: ${editingProduct.title}` : 'Add New Product'}
         </h1>
         <ProductForm
+          key={editingProduct?._id || 'new'}
           categories={flatCategories}
           editingProduct={editingProduct}
           onSaved={handleSaved}
