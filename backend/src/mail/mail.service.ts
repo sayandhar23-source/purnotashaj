@@ -1,29 +1,44 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class MailService {
-  private transporter: nodemailer.Transporter;
-  private from: string;
+  private apiKey: string;
+  private fromEmail: string;
+  private fromName: string;
   private logger = new Logger(MailService.name);
 
   constructor(private config: ConfigService) {
-    const gmailUser = this.config.get('GMAIL_USER');
-    const gmailAppPassword = this.config.get('GMAIL_APP_PASSWORD');
-    const fromName = this.config.get('MAIL_FROM_NAME') || 'Purnota Shaj';
+    this.apiKey = this.config.get('BREVO_API_KEY');
+    this.fromEmail = this.config.get('MAIL_FROM_EMAIL');
+    this.fromName = this.config.get('MAIL_FROM_NAME') || 'Purnota Shaj';
+  }
 
-    // Gmail requires the "from" address to match the authenticated account
-    // (or a verified alias) — no arbitrary sender addresses like Resend allowed.
-    this.from = `"${fromName}" <${gmailUser}>`;
-
-    this.transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: gmailUser,
-        pass: gmailAppPassword, // the 16-character App Password, not the normal Gmail password
+  // Sends via Brevo's transactional email HTTP API (https://api.brevo.com) —
+  // plain HTTPS, not SMTP, so it isn't affected by hosts (Render, Railway, etc.)
+  // that block outbound SMTP ports on free/cheap tiers.
+  private async sendViaBrevo(to: string, subject: string, html: string) {
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'api-key': this.apiKey,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
+      body: JSON.stringify({
+        sender: { name: this.fromName, email: this.fromEmail },
+        to: [{ email: to }],
+        subject,
+        htmlContent: html,
+      }),
     });
+
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Brevo API error (${res.status}): ${body}`);
+    }
+
+    return res.json();
   }
 
   async sendOtpEmail(to: string, code: string, purpose: 'register' | 'reset-password') {
@@ -35,11 +50,10 @@ export class MailService {
       purpose === 'register' ? 'Confirm your email address' : 'Reset your password';
 
     try {
-      const info = await this.transporter.sendMail({
-        from: this.from,
+      const result: any = await this.sendViaBrevo(
         to,
         subject,
-        html: `
+        `
           <div style="font-family:sans-serif;max-width:480px;margin:auto">
             <h2>${heading}</h2>
             <p>Your one-time verification code is:</p>
@@ -47,8 +61,8 @@ export class MailService {
             <p>This code expires in 10 minutes. If you didn't request this, you can ignore this email.</p>
           </div>
         `,
-      });
-      this.logger.log(`OTP email sent to ${to} (id: ${info.messageId})`);
+      );
+      this.logger.log(`OTP email sent to ${to} (messageId: ${result?.messageId})`);
     } catch (err) {
       this.logger.error(`Failed to send OTP email to ${to}: ${err}`);
       throw new BadRequestException(
@@ -62,11 +76,10 @@ export class MailService {
   // regardless of whether this particular email goes out.
   async sendWelcomeEmail(to: string, name: string) {
     try {
-      const info = await this.transporter.sendMail({
-        from: this.from,
+      const result: any = await this.sendViaBrevo(
         to,
-        subject: 'Welcome to Purnota Shaj 🎉',
-        html: `
+        'Welcome to Purnota Shaj 🎉',
+        `
           <div style="font-family:sans-serif;max-width:480px;margin:auto">
             <h2>Welcome, ${name}!</h2>
             <p>Your account is verified and ready to go. We're glad to have you.</p>
@@ -75,8 +88,8 @@ export class MailService {
             <p style="margin-top:24px">— The Purnota Shaj team</p>
           </div>
         `,
-      });
-      this.logger.log(`Welcome email sent to ${to} (id: ${info.messageId})`);
+      );
+      this.logger.log(`Welcome email sent to ${to} (messageId: ${result?.messageId})`);
     } catch (err) {
       this.logger.error(`Failed to send welcome email to ${to}: ${err}`);
     }
@@ -84,13 +97,12 @@ export class MailService {
 
   async sendOrderConfirmation(to: string, orderId: string, total: number) {
     try {
-      const info = await this.transporter.sendMail({
-        from: this.from,
+      const result: any = await this.sendViaBrevo(
         to,
-        subject: `Order confirmed — #${orderId}`,
-        html: `<div style="font-family:sans-serif"><h2>Thanks for your order!</h2><p>Order ID: ${orderId}</p><p>Total: ${total}</p></div>`,
-      });
-      this.logger.log(`Order confirmation sent to ${to} (id: ${info.messageId})`);
+        `Order confirmed — #${orderId}`,
+        `<div style="font-family:sans-serif"><h2>Thanks for your order!</h2><p>Order ID: ${orderId}</p><p>Total: ${total}</p></div>`,
+      );
+      this.logger.log(`Order confirmation sent to ${to} (messageId: ${result?.messageId})`);
     } catch (err) {
       this.logger.error(`Failed to send order confirmation to ${to}: ${err}`);
     }
@@ -103,11 +115,10 @@ export class MailService {
     if (!adminEmail) return;
 
     try {
-      const info = await this.transporter.sendMail({
-        from: this.from,
-        to: adminEmail,
-        subject: `New order received — #${orderId}`,
-        html: `
+      const result: any = await this.sendViaBrevo(
+        adminEmail,
+        `New order received — #${orderId}`,
+        `
           <div style="font-family:sans-serif;max-width:480px;margin:auto">
             <h2>New paid order awaiting confirmation</h2>
             <p><strong>Order ID:</strong> ${orderId}</p>
@@ -117,8 +128,8 @@ export class MailService {
             confirmation email is only sent once you confirm it.</p>
           </div>
         `,
-      });
-      this.logger.log(`Admin order notification sent (id: ${info.messageId})`);
+      );
+      this.logger.log(`Admin order notification sent (messageId: ${result?.messageId})`);
     } catch (err) {
       this.logger.error(`Failed to send admin order notification: ${err}`);
     }
