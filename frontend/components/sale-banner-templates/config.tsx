@@ -58,22 +58,22 @@ export const SALE_BANNER_TEMPLATES: Record<
   'bridal': {
     label: 'Wedding / Bridal Collection',
     leftBg: '#F7E3E0', titleColor: '#5A2A32', subtitleColor: '#8A5560', eyebrowColor: '#B5657A',
-    ctaBg: '#C08A5A', ctaText: '#FFFFFF', eyebrow: 'BRIDAL EDIT', Art: BridalArt,
+    ctaBg: '#C08A5A', ctaText: '#FFFFFF', eyebrow: 'BRIDAL SPECIAL', Art: BridalArt,
   },
   'monsoon': {
     label: 'Monsoon Sale',
     leftBg: '#0F4C4C', titleColor: '#F5EEE0', subtitleColor: '#B9DEDE', eyebrowColor: '#8FD6D6',
-    ctaBg: '#F4A623', ctaText: '#0F4C4C', eyebrow: 'MONSOON EDIT', Art: MonsoonArt,
+    ctaBg: '#F4A623', ctaText: '#0F4C4C', eyebrow: 'MONSOON SPECIAL', Art: MonsoonArt,
   },
   'summer': {
     label: 'Summer Collection',
     leftBg: '#E85D3D', titleColor: '#F5EEE0', subtitleColor: '#FBD9C9', eyebrowColor: '#F4C430',
-    ctaBg: '#F4C430', ctaText: '#E85D3D', eyebrow: 'SUMMER EDIT', Art: SummerArt,
+    ctaBg: '#F4C430', ctaText: '#E85D3D', eyebrow: 'SUMMER SPECIAL', Art: SummerArt,
   },
   'winter': {
     label: 'Winter Collection',
     leftBg: '#1B3A5C', titleColor: '#F5EEE0', subtitleColor: '#B9D4EA', eyebrowColor: '#9FC9EA',
-    ctaBg: '#DCEEFB', ctaText: '#1B3A5C', eyebrow: 'WINTER EDIT', Art: WinterArt,
+    ctaBg: '#DCEEFB', ctaText: '#1B3A5C', eyebrow: 'WINTER SPECIAL', Art: WinterArt,
   },
   'valentine': {
     label: "Valentine's Day",
@@ -88,7 +88,7 @@ export const SALE_BANNER_TEMPLATES: Record<
   'eid': {
     label: 'Eid Sale',
     leftBg: '#0F3D2E', titleColor: '#F5EEE0', subtitleColor: '#B8D4C8', eyebrowColor: '#D4A024',
-    ctaBg: '#D4A024', ctaText: '#0F3D2E', eyebrow: 'EID MUBARAK', Art: EidArt,
+    ctaBg: '#D4A024', ctaText: '#0F3D2E', eyebrow: 'PURNOTA SHAJ REPRESENTS', Art: EidArt,
   },
   'christmas': {
     label: 'Christmas Sale',
