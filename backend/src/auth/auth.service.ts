@@ -114,6 +114,10 @@ export class AuthService {
       userAgent,
     });
 
+    // Fire-and-forget — a failed welcome email should never block registration,
+    // the account is already created and verified at this point either way.
+    this.mailService.sendWelcomeEmail(user.email, user.name).catch(() => {});
+
     const token = this.signToken(user);
     return {
       token,
