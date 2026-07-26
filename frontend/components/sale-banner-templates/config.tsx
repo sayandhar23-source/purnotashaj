@@ -38,7 +38,7 @@ export const SALE_BANNER_TEMPLATES: Record<
   'independence-day': {
     label: 'Independence Day Sale',
     leftBg: '#FFFFFF', titleColor: '#1A1A1A', subtitleColor: '#4A4A4A', eyebrowColor: '#FF9933',
-    ctaBg: '#138808', ctaText: '#FFFFFF', eyebrow: 'INDEPENDENCE DAY', Art: IndependenceDayArt,
+    ctaBg: '#138808', ctaText: '#FFFFFF', eyebrow: 'THIS SPECIAL DAY', Art: IndependenceDayArt,
   },
   'durga-puja': {
     label: 'Durga Puja Special',
