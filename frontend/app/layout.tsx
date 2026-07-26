@@ -9,8 +9,15 @@ import Footer from '@/components/Footer';
 import LiveChatWidget from '@/components/LiveChatWidget';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.purnotashaj.shop'),
   title: 'Purnota Shaj',
   description: 'Clothing, jewellery, ornaments and makeup — curated for you.',
+  openGraph: {
+    siteName: 'Purnota Shaj',
+    type: 'website',
+    title: 'Purnota Shaj',
+    description: 'Clothing, jewellery, ornaments and makeup — curated for you.',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
