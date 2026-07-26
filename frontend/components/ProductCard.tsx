@@ -73,7 +73,8 @@ export default function ProductCard({ product }: { product: ProductSummary }) {
             <Image
               key={img + i}
               src={img}
-              alt={product.title}
+              alt={i === activeImage ? product.title : ''}
+              aria-hidden={i === activeImage ? undefined : true}
               fill
               className={`object-cover transition-opacity duration-300 ${
                 i === activeImage ? 'opacity-100' : 'opacity-0'
