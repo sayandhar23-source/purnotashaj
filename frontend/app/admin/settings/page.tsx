@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { MessageCircle, Instagram, Facebook, Youtube, Send } from 'lucide-react';
+import { MessageCircle, Instagram, Facebook, Youtube, Send, Percent } from 'lucide-react';
 import AccountSettingsForm from '@/components/AccountSettingsForm';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api';
@@ -13,6 +13,8 @@ export default function AdminSettingsPage() {
   const { refreshUser } = useAuth();
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [telegramChatId, setTelegramChatId] = useState('');
+  const [commissionPercent, setCommissionPercent] = useState('10');
+  const [savingCommission, setSavingCommission] = useState(false);
   const [savingTelegram, setSavingTelegram] = useState(false);
   const [settingUpWebhook, setSettingUpWebhook] = useState(false);
   const [social, setSocial] = useState({
@@ -31,6 +33,7 @@ export default function AdminSettingsPage() {
       .then((res) => {
         setWhatsappNumber(res.data.whatsappNumber || '');
         setTelegramChatId(res.data.telegramChatId || '');
+        setCommissionPercent(String(res.data.referralCommissionPercent ?? 10));
         setSocial({
           instagramUrl: res.data.instagramUrl || '',
           facebookUrl: res.data.facebookUrl || '',
@@ -51,6 +54,24 @@ export default function AdminSettingsPage() {
       toast.error(err?.message || 'Could not update WhatsApp number.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSaveCommission = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const value = Number(commissionPercent);
+    if (isNaN(value) || value < 0 || value > 100) {
+      toast.error('Enter a percentage between 0 and 100.');
+      return;
+    }
+    setSavingCommission(true);
+    try {
+      await api.patch('/settings', { referralCommissionPercent: value });
+      toast.success('Referral commission rate updated.');
+    } catch (err: any) {
+      toast.error(err?.message || 'Could not update commission rate.');
+    } finally {
+      setSavingCommission(false);
     }
   };
 
@@ -123,6 +144,37 @@ export default function AdminSettingsPage() {
               />
               <button type="submit" disabled={saving} className="btn-primary w-full">
                 {saving ? 'Saving...' : 'Update WhatsApp Number'}
+              </button>
+            </>
+          )}
+        </form>
+
+        <form onSubmit={handleSaveCommission} className="card p-6 space-y-3">
+          <h3 className="font-semibold flex items-center gap-2">
+            <Percent size={18} className="text-brand-500" />
+            Referral Commission Rate
+          </h3>
+          <p className="text-xs text-gray-500">
+            The percentage of an order's total that a referrer earns once you confirm the order.
+            Applies to all future orders — past earnings aren't affected by changing this.
+          </p>
+          {loading ? (
+            <p className="text-sm text-gray-400">Loading...</p>
+          ) : (
+            <>
+              <div className="relative">
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  className="input pr-8"
+                  value={commissionPercent}
+                  onChange={(e) => setCommissionPercent(e.target.value)}
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">%</span>
+              </div>
+              <button type="submit" disabled={savingCommission} className="btn-primary w-full">
+                {savingCommission ? 'Saving...' : 'Update Commission Rate'}
               </button>
             </>
           )}
