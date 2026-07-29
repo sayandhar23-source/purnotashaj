@@ -99,6 +99,9 @@ export default async function Footer() {
               <li>
                 <Link href="/account/dashboard" className="hover:text-white">Track Order</Link>
               </li>
+              <li>
+                <Link href="/refer-and-earn" className="hover:text-white">Refer &amp; Earn</Link>
+              </li>
             </ul>
           </div>
           <div>
