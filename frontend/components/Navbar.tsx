@@ -52,6 +52,9 @@ export default function Navbar() {
                 {c.name}
               </Link>
             ))}
+            <Link href="/refer-and-earn" className="text-brand-600 hover:text-brand-700">
+              Refer & Earn
+            </Link>
           </nav>
 
           <div className="flex items-center gap-3 sm:gap-4">
@@ -101,6 +104,15 @@ export default function Navbar() {
               </Link>
             ))}
           </nav>
+
+          <Link
+            href="/refer-and-earn"
+            onClick={() => setOpen(false)}
+            className="flex items-center justify-between px-4 py-3 mb-5 rounded-xl text-sm font-medium text-brand-600 bg-brand-50"
+          >
+            Refer & Earn
+            <ChevronRight size={16} className="text-brand-400" />
+          </Link>
 
           <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400 mb-2">
             My Account
