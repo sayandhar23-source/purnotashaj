@@ -1,16 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { useWishlist } from '@/lib/wishlist-context';
 import { api } from '@/lib/api';
 import AccountSettingsForm from '@/components/AccountSettingsForm';
+import ReferralsPanel from '@/components/ReferralsPanel';
+import ProductCard from '@/components/ProductCard';
+import { useDocumentTitle } from '@/lib/useDocumentTitle';
 
-type Tab = 'orders' | 'wishlist' | 'settings';
+type Tab = 'orders' | 'wishlist' | 'referrals' | 'settings';
 
 export default function DashboardPage() {
+  useDocumentTitle('My Account');
   const { user, loading, logout, refreshUser } = useAuth();
+  const { wishlistIds } = useWishlist();
   const router = useRouter();
   const [tab, setTab] = useState<Tab>('orders');
   const [orders, setOrders] = useState<any[]>([]);
@@ -27,6 +32,11 @@ export default function DashboardPage() {
       api.get('/wishlist').then((res) => setWishlistProducts(res.data.products || []));
   }, [tab, user]);
 
+  // Filtered against the live wishlist context — unhearting a product on this
+  // tab (or anywhere else on the site) removes it from view immediately,
+  // without needing to refetch.
+  const visibleWishlistProducts = wishlistProducts.filter((p) => wishlistIds.has(p._id));
+
   if (loading || !user) {
     return <div className="max-w-4xl mx-auto px-4 py-20 text-center text-gray-400">Loading...</div>;
   }
@@ -40,12 +50,12 @@ export default function DashboardPage() {
         </button>
       </div>
 
-      <div className="flex gap-2 border-b mb-8">
-        {(['orders', 'wishlist', 'settings'] as Tab[]).map((t) => (
+      <div className="flex gap-2 border-b mb-8 overflow-x-auto">
+        {(['orders', 'wishlist', 'referrals', 'settings'] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-2 text-sm font-medium capitalize border-b-2 ${
+            className={`px-4 py-2 text-sm font-medium capitalize border-b-2 shrink-0 ${
               tab === t ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500'
             }`}
           >
@@ -80,19 +90,16 @@ export default function DashboardPage() {
       )}
 
       {tab === 'wishlist' && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {wishlistProducts.length === 0 ? (
-            <p className="text-gray-500 text-sm">No items saved yet.</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
+          {visibleWishlistProducts.length === 0 ? (
+            <p className="text-gray-500 text-sm col-span-full">No items saved yet.</p>
           ) : (
-            wishlistProducts.map((p: any) => (
-              <Link key={p._id} href={`/products/${p.slug}`} className="card p-3">
-                <p className="text-sm font-medium line-clamp-1">{p.title}</p>
-                <p className="text-sm text-gray-500">₹{p.basePrice}</p>
-              </Link>
-            ))
+            visibleWishlistProducts.map((p: any) => <ProductCard key={p._id} product={p} />)
           )}
         </div>
       )}
+
+      {tab === 'referrals' && <ReferralsPanel />}
 
       {tab === 'settings' && <AccountSettingsForm onUpdated={refreshUser} />}
     </div>
