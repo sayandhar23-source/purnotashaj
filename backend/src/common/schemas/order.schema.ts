@@ -64,6 +64,15 @@ export class Order {
 
   @Prop()
   confirmedAt?: Date;
+
+  // Referral attribution — set at order creation time if a referral cookie was
+  // active. Commission itself is only credited once the order is confirmed
+  // (see ReferralsService), and reversed if the order is later cancelled.
+  @Prop()
+  referralCode?: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  referralUserId?: Types.ObjectId;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
