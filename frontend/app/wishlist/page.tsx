@@ -7,10 +7,12 @@ import { useAuth } from '@/lib/auth-context';
 import ProductCard, { ProductSummary } from '@/components/ProductCard';
 import { useDocumentTitle } from '@/lib/useDocumentTitle';
 import ProductGridSkeleton from '@/components/skeletons/ProductGridSkeleton';
+import { useWishlist } from '@/lib/wishlist-context';
 
 export default function WishlistPage() {
   useDocumentTitle('Wishlist');
   const { user, loading } = useAuth();
+  const { wishlistIds } = useWishlist();
   const [products, setProducts] = useState<ProductSummary[]>([]);
   const [fetching, setFetching] = useState(true);
 
@@ -48,15 +50,18 @@ export default function WishlistPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <h1 className="text-2xl font-serif font-semibold mb-8">Your Wishlist</h1>
-      {products.length === 0 ? (
-        <p className="text-gray-500 text-sm">No items saved yet.</p>
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {products.map((p) => (
-            <ProductCard key={p._id} product={p} />
-          ))}
-        </div>
-      )}
+      {(() => {
+        const visibleProducts = products.filter((p) => wishlistIds.has(p._id));
+        return visibleProducts.length === 0 ? (
+          <p className="text-gray-500 text-sm">No items saved yet.</p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+            {visibleProducts.map((p) => (
+              <ProductCard key={p._id} product={p} />
+            ))}
+          </div>
+        );
+      })()}
     </div>
   );
 }
