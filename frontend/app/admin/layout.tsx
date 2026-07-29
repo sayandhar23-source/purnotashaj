@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Bell,
+  Wallet,
   LayoutDashboard,
   Package,
   FolderTree,
@@ -15,6 +16,7 @@ import {
   Settings as SettingsIcon,
   PanelLeftClose,
   PanelLeftOpen,
+  LogOut,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api';
@@ -25,13 +27,14 @@ const NAV = [
   { href: '/admin/categories', label: 'Categories', icon: FolderTree },
   { href: '/admin/sale-page', label: 'Sale Page', icon: BadgePercent },
   { href: '/admin/orders', label: 'Orders', icon: ClipboardList, showBadge: true },
+  { href: '/admin/withdrawals', label: 'Withdrawals', icon: Wallet },
   { href: '/admin/newsletter', label: 'Newsletter', icon: Mail },
   { href: '/admin/logs', label: 'User Logs', icon: History },
   { href: '/admin/settings', label: 'Settings', icon: SettingsIcon },
 ];
 
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [pendingCount, setPendingCount] = useState(0);
@@ -116,6 +119,19 @@ export default function AdminRootLayout({ children }: { children: React.ReactNod
             );
           })}
         </nav>
+
+        <div className="mt-2 pt-2 border-t border-gray-100">
+          <button
+            onClick={logout}
+            title={collapsed ? 'Log out' : undefined}
+            className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-red-500 hover:bg-red-50 ${
+              collapsed ? 'justify-center' : ''
+            }`}
+          >
+            <LogOut size={18} className="shrink-0" />
+            {!collapsed && <span>Log out</span>}
+          </button>
+        </div>
       </aside>
 
       <main className="flex-1 min-w-0">{children}</main>
