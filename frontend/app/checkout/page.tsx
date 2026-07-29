@@ -6,6 +6,8 @@ import toast from 'react-hot-toast';
 import { useCart } from '@/lib/cart-context';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api';
+import { useDocumentTitle } from '@/lib/useDocumentTitle';
+import { getReferralCookie } from '@/lib/referral';
 
 declare global {
   interface Window {
@@ -14,6 +16,7 @@ declare global {
 }
 
 export default function CheckoutPage() {
+  useDocumentTitle('Checkout');
   const { items, total, clearCart } = useCart();
   const { user } = useAuth();
   const router = useRouter();
@@ -62,6 +65,7 @@ export default function CheckoutPage() {
         totalAmount: total,
         paymentProvider: provider,
         shippingAddress: address,
+        referralCode: getReferralCookie(),
       });
       const orderId = orderRes.data._id;
 
