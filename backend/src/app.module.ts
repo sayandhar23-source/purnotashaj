@@ -18,6 +18,7 @@ import { MailModule } from './mail/mail.module';
 import { SettingsModule } from './settings/settings.module';
 import { SaleBannerModule } from './sale-banner/sale-banner.module';
 import { ChatModule } from './chat/chat.module';
+import { ReferralsModule } from './referrals/referrals.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { ChatModule } from './chat/chat.module';
     SettingsModule,
     SaleBannerModule,
     ChatModule,
+    ReferralsModule,
   ],
 })
 export class AppModule {}
