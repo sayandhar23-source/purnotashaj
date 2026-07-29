@@ -20,6 +20,14 @@ export class User {
   @Prop({ enum: ['customer', 'admin'], default: 'customer' })
   role: string;
 
+  // Referral program — code is auto-generated the first time the user opens
+  // their Referrals tab, not at registration (keeps admin/system users clean).
+  @Prop({ unique: true, sparse: true })
+  referralCode?: string;
+
+  @Prop({ default: 0 })
+  referralBalance: number;
+
   @Prop()
   otpCodeHash?: string;
 
