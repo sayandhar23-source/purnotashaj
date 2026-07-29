@@ -27,6 +27,10 @@ export class StoreSettings {
   // not here — same pattern as other API keys (Stripe, Resend, etc.).
   @Prop({ default: '' })
   telegramChatId: string;
+
+  // Referral program commission rate, as a whole percentage (10 = 10%).
+  @Prop({ default: 10 })
+  referralCommissionPercent: number;
 }
 
 export const StoreSettingsSchema = SchemaFactory.createForClass(StoreSettings);
