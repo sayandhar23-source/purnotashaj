@@ -42,4 +42,8 @@ export class CreateOrderDto {
   @IsOptional()
   @IsObject()
   shippingAddress?: Record<string, string>;
+
+  @IsOptional()
+  @IsString()
+  referralCode?: string;
 }
