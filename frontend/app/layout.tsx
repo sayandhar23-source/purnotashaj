@@ -7,6 +7,7 @@ import { Toaster } from 'react-hot-toast';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import LiveChatWidget from '@/components/LiveChatWidget';
+import ReferralCapture from '@/lib/referral';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.purnotashaj.shop'),
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
+              <ReferralCapture />
               <Navbar />
               <main className="min-h-screen">{children}</main>
               <Footer />
