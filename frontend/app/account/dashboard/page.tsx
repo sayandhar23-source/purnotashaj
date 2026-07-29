@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useWishlist } from '@/lib/wishlist-context';
 import { api } from '@/lib/api';
@@ -12,12 +12,16 @@ import { useDocumentTitle } from '@/lib/useDocumentTitle';
 
 type Tab = 'orders' | 'wishlist' | 'referrals' | 'settings';
 
-export default function DashboardPage() {
+function DashboardInner() {
   useDocumentTitle('My Account');
   const { user, loading, logout, refreshUser } = useAuth();
   const { wishlistIds } = useWishlist();
   const router = useRouter();
-  const [tab, setTab] = useState<Tab>('orders');
+  const searchParams = useSearchParams();
+  const initialTab = (searchParams.get('tab') as Tab) || 'orders';
+  const [tab, setTab] = useState<Tab>(
+    ['orders', 'wishlist', 'referrals', 'settings'].includes(initialTab) ? initialTab : 'orders',
+  );
   const [orders, setOrders] = useState<any[]>([]);
   const [wishlistProducts, setWishlistProducts] = useState<any[]>([]);
 
@@ -103,5 +107,13 @@ export default function DashboardPage() {
 
       {tab === 'settings' && <AccountSettingsForm onUpdated={refreshUser} />}
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<div className="max-w-4xl mx-auto px-4 py-20 text-center text-gray-400">Loading...</div>}>
+      <DashboardInner />
+    </Suspense>
   );
 }
