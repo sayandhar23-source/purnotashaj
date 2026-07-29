@@ -69,6 +69,24 @@ export default async function HomePage() {
         </div>
       )}
 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <Link
+          href="/refer-and-earn"
+          className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl px-5 sm:px-8 py-5 sm:py-6 text-center sm:text-left"
+          style={{ backgroundColor: '#FBE6D8' }}
+        >
+          <div>
+            <p className="text-xs font-semibold tracking-widest text-brand-600">EARN WITH US</p>
+            <p className="font-serif font-semibold text-lg sm:text-xl mt-1 text-gray-900">
+              Now earn by referral — see how
+            </p>
+          </div>
+          <span className="btn-primary inline-block px-6 py-2.5 shrink-0 whitespace-nowrap">
+            Learn More
+          </span>
+        </Link>
+      </div>
+
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <h2 className="text-xl font-serif font-semibold mb-6">Shop by Category</h2>
         <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory">
