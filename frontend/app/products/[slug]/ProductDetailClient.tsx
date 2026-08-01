@@ -1,13 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Heart, ChevronLeft, ChevronRight } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { Heart, ChevronLeft, ChevronRight, ShoppingBag, Zap } from 'lucide-react';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import ProductCard, { ProductSummary } from '@/components/ProductCard';
 import { getVideoInfo } from '@/lib/video';
 import SaleCountdown from '@/components/SaleCountdown';
 import { useWishlist } from '@/lib/wishlist-context';
+import { useCart } from '@/lib/cart-context';
 import Breadcrumbs, { Crumb } from '@/components/Breadcrumbs';
 
 type Variant = {
@@ -58,6 +61,8 @@ export default function ProductDetailClient({
   const [qty, setQty] = useState(1);
   const { isWishlisted, toggle } = useWishlist();
   const wishlisted = isWishlisted(product._id);
+  const { addItem, clearCart } = useCart();
+  const router = useRouter();
 
   const onSale = !selectedVariant && !!product.saleInfo?.isActive;
   const price = onSale
@@ -88,6 +93,32 @@ export default function ProductDetailClient({
       else goToImage(activeImage - 1);
     }
     setTouchStartX(null);
+  };
+
+  const isOutOfStock = !!selectedVariant && selectedVariant.stock === 0;
+
+  const buildCartItem = () => ({
+    productId: product._id,
+    slug: product.slug,
+    title: product.title,
+    variantId: selectedVariant?._id,
+    variantName: selectedVariant?.name,
+    price,
+    quantity: qty,
+    image: images[0],
+  });
+
+  const handleAddToCart = () => {
+    addItem(buildCartItem());
+    toast.success('Added to cart');
+  };
+
+  const handleBuyNow = () => {
+    // Buy Now checks out just this item, independent of whatever else might
+    // already be sitting in the cart from earlier browsing.
+    clearCart();
+    addItem(buildCartItem());
+    router.push('/checkout');
   };
 
   return (
@@ -229,15 +260,37 @@ export default function ProductDetailClient({
           </button>
         </div>
 
-        <div className="mt-6 max-w-sm">
+        <div className="mt-6 max-w-sm space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={handleAddToCart}
+              disabled={isOutOfStock}
+              className="btn-outline flex items-center justify-center gap-1.5 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <ShoppingBag size={16} />
+              Add to Cart
+            </button>
+            <button
+              onClick={handleBuyNow}
+              disabled={isOutOfStock}
+              className="btn-primary flex items-center justify-center gap-1.5 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <Zap size={16} />
+              Buy Now
+            </button>
+          </div>
+          {isOutOfStock && (
+            <p className="text-xs text-red-500">This option is currently out of stock.</p>
+          )}
+
           <WhatsAppButton
             product={product}
             whatsappNumber={whatsappNumber}
             variantName={selectedVariant?.name}
             quantity={qty}
           />
-          <p className="text-xs text-gray-500 mt-2">
-            Message us on WhatsApp with the product details pre-filled — we'll help you complete your order there.
+          <p className="text-xs text-gray-500">
+            Prefer to order over chat? Message us on WhatsApp with the product details pre-filled instead.
           </p>
         </div>
 
