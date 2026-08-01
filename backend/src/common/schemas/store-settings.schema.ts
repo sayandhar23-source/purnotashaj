@@ -31,6 +31,46 @@ export class StoreSettings {
   // Referral program commission rate, as a whole percentage (10 = 10%).
   @Prop({ default: 10 })
   referralCommissionPercent: number;
+
+  // Delivery estimate zones — used to compute an estimated delivery date
+  // range from a customer's pincode on the product page. All admin-editable.
+  @Prop({ default: 'West Bengal' })
+  shippingOriginState: string;
+
+  @Prop({ default: 3 })
+  sameStateDeliveryMinDays: number;
+
+  @Prop({ default: 6 })
+  sameStateDeliveryMaxDays: number;
+
+  @Prop({ default: 7 })
+  otherStateDeliveryMinDays: number;
+
+  @Prop({ default: 10 })
+  otherStateDeliveryMaxDays: number;
+
+  @Prop({ default: 12 })
+  remoteDeliveryMinDays: number;
+
+  @Prop({ default: 15 })
+  remoteDeliveryMaxDays: number;
+
+  @Prop({
+    default: [
+      'Arunachal Pradesh',
+      'Nagaland',
+      'Manipur',
+      'Mizoram',
+      'Tripura',
+      'Meghalaya',
+      'Sikkim',
+      'Andaman and Nicobar Islands',
+      'Lakshadweep',
+      'Jammu and Kashmir',
+      'Ladakh',
+    ],
+  })
+  remoteStates: string[];
 }
 
 export const StoreSettingsSchema = SchemaFactory.createForClass(StoreSettings);
