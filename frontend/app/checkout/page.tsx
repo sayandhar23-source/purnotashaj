@@ -160,10 +160,10 @@ export default function CheckoutPage() {
 
       <div className="card p-6 mt-6">
         <h2 className="font-semibold mb-3">Payment Method</h2>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={() => setProvider('razorpay')}
-            className={`px-4 py-2 rounded-full border text-sm ${
+            className={`px-4 py-3 rounded-lg sm:rounded-full border text-sm text-left sm:text-center ${
               provider === 'razorpay' ? 'border-brand-500 bg-brand-50 text-brand-600' : 'border-gray-300'
             }`}
           >
@@ -171,7 +171,7 @@ export default function CheckoutPage() {
           </button>
           <button
             onClick={() => setProvider('stripe')}
-            className={`px-4 py-2 rounded-full border text-sm ${
+            className={`px-4 py-3 rounded-lg sm:rounded-full border text-sm text-left sm:text-center ${
               provider === 'stripe' ? 'border-brand-500 bg-brand-50 text-brand-600' : 'border-gray-300'
             }`}
           >
@@ -180,9 +180,9 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      <div className="mt-8 flex items-center justify-between">
+      <div className="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <span className="text-lg font-semibold">Total: ₹{total}</span>
-        <button onClick={handlePlaceOrder} disabled={loading} className="btn-primary">
+        <button onClick={handlePlaceOrder} disabled={loading} className="btn-primary w-full sm:w-auto">
           {loading ? 'Processing...' : 'Place Order & Pay'}
         </button>
       </div>
