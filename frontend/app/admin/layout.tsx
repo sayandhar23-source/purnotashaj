@@ -28,6 +28,7 @@ const NAV = [
   { href: '/admin/sale-page', label: 'Sale Page', icon: BadgePercent },
   { href: '/admin/orders', label: 'Orders', icon: ClipboardList, showBadge: true },
   { href: '/admin/withdrawals', label: 'Withdrawals', icon: Wallet },
+  { href: '/admin/notifications', label: 'Notifications', icon: Bell },
   { href: '/admin/newsletter', label: 'Newsletter', icon: Mail },
   { href: '/admin/logs', label: 'User Logs', icon: History },
   { href: '/admin/settings', label: 'Settings', icon: SettingsIcon },
