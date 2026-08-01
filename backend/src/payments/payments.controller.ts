@@ -2,6 +2,7 @@ import { Body, Controller, Headers, Post, Req, UseGuards } from '@nestjs/common'
 import { Request } from 'express';
 import { PaymentsService } from './payments.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { CreateOrderPaymentDto, VerifyRazorpayDto } from './dto/payment.dto';
 
 @Controller('payments')
 export class PaymentsController {
@@ -9,8 +10,8 @@ export class PaymentsController {
 
   @UseGuards(JwtAuthGuard)
   @Post('stripe/checkout-session')
-  createStripeSession(@Body('orderId') orderId: string) {
-    return this.paymentsService.createStripeCheckoutSession(orderId);
+  createStripeSession(@Body() dto: CreateOrderPaymentDto) {
+    return this.paymentsService.createStripeCheckoutSession(dto.orderId);
   }
 
   // Stripe requires the raw body for signature verification.
@@ -22,21 +23,13 @@ export class PaymentsController {
 
   @UseGuards(JwtAuthGuard)
   @Post('razorpay/order')
-  createRazorpayOrder(@Body('orderId') orderId: string) {
-    return this.paymentsService.createRazorpayOrder(orderId);
+  createRazorpayOrder(@Body() dto: CreateOrderPaymentDto) {
+    return this.paymentsService.createRazorpayOrder(dto.orderId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('razorpay/verify')
-  verifyRazorpay(
-    @Body()
-    body: {
-      orderId: string;
-      razorpayOrderId: string;
-      razorpayPaymentId: string;
-      razorpaySignature: string;
-    },
-  ) {
-    return this.paymentsService.verifyRazorpayPayment(body);
+  verifyRazorpay(@Body() dto: VerifyRazorpayDto) {
+    return this.paymentsService.verifyRazorpayPayment(dto);
   }
 }
