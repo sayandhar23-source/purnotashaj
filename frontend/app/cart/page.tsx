@@ -4,8 +4,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Trash2 } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
+import { useDocumentTitle } from '@/lib/useDocumentTitle';
 
 export default function CartPage() {
+  useDocumentTitle('Your Cart');
   const { items, removeItem, updateQuantity, total } = useCart();
 
   if (items.length === 0) {
@@ -26,47 +28,63 @@ export default function CartPage() {
         {items.map((item) => (
           <div
             key={item.productId + (item.variantId || '')}
-            className="flex gap-4 items-center card p-4"
+            className="card p-4 flex flex-col sm:flex-row sm:items-center gap-4"
           >
-            <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-              {item.image && <Image src={item.image} alt={item.title} fill className="object-cover" />}
-            </div>
-            <div className="flex-1">
-              <p className="font-medium">{item.title}</p>
-              {item.variantName && <p className="text-sm text-gray-500">{item.variantName}</p>}
-              <p className="font-semibold mt-1">₹{item.price}</p>
-            </div>
-            <div className="flex items-center border rounded-full">
+            <div className="flex gap-4 flex-1 min-w-0">
+              <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                {item.image && <Image src={item.image} alt={item.title} fill className="object-cover" />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium truncate">{item.title}</p>
+                {item.variantName && <p className="text-sm text-gray-500">{item.variantName}</p>}
+                <p className="font-semibold mt-1">₹{item.price}</p>
+              </div>
+              {/* Remove button sits up here on mobile, next to the details */}
               <button
-                className="px-3 py-1"
-                onClick={() =>
-                  updateQuantity(item.productId, item.variantId, Math.max(1, item.quantity - 1))
-                }
+                onClick={() => removeItem(item.productId, item.variantId)}
+                className="text-gray-400 hover:text-red-500 sm:hidden shrink-0 self-start"
+                aria-label="Remove"
               >
-                −
-              </button>
-              <span className="px-3">{item.quantity}</span>
-              <button
-                className="px-3 py-1"
-                onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)}
-              >
-                +
+                <Trash2 size={18} />
               </button>
             </div>
-            <button
-              onClick={() => removeItem(item.productId, item.variantId)}
-              className="text-gray-400 hover:text-red-500"
-              aria-label="Remove"
-            >
-              <Trash2 size={18} />
-            </button>
+
+            <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
+              <div className="flex items-center border rounded-full">
+                <button
+                  className="px-3 py-1.5"
+                  onClick={() =>
+                    updateQuantity(item.productId, item.variantId, Math.max(1, item.quantity - 1))
+                  }
+                  aria-label="Decrease quantity"
+                >
+                  −
+                </button>
+                <span className="px-3">{item.quantity}</span>
+                <button
+                  className="px-3 py-1.5"
+                  onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)}
+                  aria-label="Increase quantity"
+                >
+                  +
+                </button>
+              </div>
+              {/* Same remove button, desktop position */}
+              <button
+                onClick={() => removeItem(item.productId, item.variantId)}
+                className="hidden sm:block text-gray-400 hover:text-red-500"
+                aria-label="Remove"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-8 flex items-center justify-between">
+      <div className="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <span className="text-lg font-semibold">Total: ₹{total}</span>
-        <Link href="/checkout" className="btn-primary">
+        <Link href="/checkout" className="btn-primary text-center">
           Proceed to Checkout
         </Link>
       </div>
