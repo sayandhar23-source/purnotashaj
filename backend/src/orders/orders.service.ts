@@ -4,16 +4,28 @@ import { Model } from 'mongoose';
 import { Order, OrderDocument } from '../common/schemas/order.schema';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { MailService } from '../mail/mail.service';
+import { ReferralsService } from '../referrals/referrals.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
     private mailService: MailService,
+    private referralsService: ReferralsService,
+    private notificationsService: NotificationsService,
   ) {}
 
-  create(userId: string, dto: CreateOrderDto) {
-    return this.orderModel.create({ ...dto, user: userId, status: 'pending' });
+  async create(userId: string, dto: CreateOrderDto) {
+    const { referralCode, ...rest } = dto;
+    const referralUserId = await this.referralsService.resolveReferrer(referralCode, userId);
+    return this.orderModel.create({
+      ...rest,
+      user: userId,
+      status: 'pending',
+      referralCode: referralUserId ? referralCode : undefined,
+      referralUserId: referralUserId || undefined,
+    });
   }
 
   findMyOrders(userId: string) {
@@ -33,6 +45,14 @@ export class OrdersService {
     if (paymentReference) update.paymentReference = paymentReference;
     const order = await this.orderModel.findByIdAndUpdate(id, update, { new: true });
     if (!order) throw new NotFoundException('Order not found');
+
+    if (status === 'cancelled' || status === 'failed') {
+      await this.referralsService.reverseCommission(id);
+      if (status === 'cancelled') {
+        await this.notificationsService.notifyOrderCancelled(order.user.toString(), id);
+      }
+    }
+
     return order;
   }
 
@@ -60,10 +80,17 @@ export class OrdersService {
     if (order.status === 'paid') order.status = 'confirmed' as any;
     await order.save();
 
+    await this.referralsService.creditCommission(order);
+
     const customer: any = order.user;
     if (customer?.email) {
       await this.mailService.sendOrderConfirmation(customer.email, order._id.toString(), order.totalAmount);
     }
+    await this.notificationsService.notifyOrderConfirmed(
+      (customer?._id || order.user).toString(),
+      order._id.toString(),
+      order.totalAmount,
+    );
 
     return order;
   }
