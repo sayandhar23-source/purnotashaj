@@ -17,6 +17,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useCart } from '@/lib/cart-context';
 import { api } from '@/lib/api';
 import AnimatedLogo from './AnimatedLogo';
+import NotificationCenter from './NotificationCenter';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -78,6 +79,7 @@ export default function Navbar() {
             <Link href={accountHref} aria-label="Account" className="hover:text-brand-500">
               <User size={20} />
             </Link>
+            <NotificationCenter />
           </div>
         </div>
       </div>
