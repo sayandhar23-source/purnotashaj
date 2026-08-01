@@ -9,10 +9,12 @@ import {
   LayoutDashboard,
   Menu,
   Search,
+  ShoppingBag,
   User,
   X,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import { useCart } from '@/lib/cart-context';
 import { api } from '@/lib/api';
 import AnimatedLogo from './AnimatedLogo';
 
@@ -20,6 +22,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
   const { user } = useAuth();
+  const { count } = useCart();
 
   useEffect(() => {
     api
@@ -63,6 +66,14 @@ export default function Navbar() {
             </Link>
             <Link href="/wishlist" aria-label="Wishlist" className="hover:text-brand-500">
               <Heart size={20} />
+            </Link>
+            <Link href="/cart" aria-label="Cart" className="relative hover:text-brand-500">
+              <ShoppingBag size={20} />
+              {count > 0 && (
+                <span className="absolute -top-2 -right-2 bg-brand-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                  {count}
+                </span>
+              )}
             </Link>
             <Link href={accountHref} aria-label="Account" className="hover:text-brand-500">
               <User size={20} />
@@ -117,7 +128,7 @@ export default function Navbar() {
           <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400 mb-2">
             My Account
           </p>
-          <div className="grid grid-cols-2 gap-2 mb-2">
+          <div className="grid grid-cols-3 gap-2 mb-2">
             <Link
               href="/wishlist"
               onClick={() => setOpen(false)}
@@ -125,6 +136,19 @@ export default function Navbar() {
             >
               <Heart size={20} className="text-brand-500" />
               <span className="text-xs font-medium text-gray-700">Wishlist</span>
+            </Link>
+            <Link
+              href="/cart"
+              onClick={() => setOpen(false)}
+              className="relative flex flex-col items-center gap-1.5 py-4 rounded-xl border border-gray-100 hover:border-brand-300 hover:bg-brand-50"
+            >
+              <ShoppingBag size={20} className="text-brand-500" />
+              <span className="text-xs font-medium text-gray-700">Cart</span>
+              {count > 0 && (
+                <span className="absolute top-2 right-2 bg-brand-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                  {count}
+                </span>
+              )}
             </Link>
             <Link
               href={accountHref}
