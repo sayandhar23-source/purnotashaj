@@ -19,6 +19,7 @@ import { SettingsModule } from './settings/settings.module';
 import { SaleBannerModule } from './sale-banner/sale-banner.module';
 import { ChatModule } from './chat/chat.module';
 import { ReferralsModule } from './referrals/referrals.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ReferralsModule } from './referrals/referrals.module';
     SaleBannerModule,
     ChatModule,
     ReferralsModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}
