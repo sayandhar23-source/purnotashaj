@@ -92,18 +92,40 @@ export default function CheckoutPage() {
         order_id: razorpayOrderId,
         name: 'Purnota Shaj',
         handler: async (response: any) => {
-          await api.post('/payments/razorpay/verify', {
-            orderId,
-            razorpayOrderId: response.razorpay_order_id,
-            razorpayPaymentId: response.razorpay_payment_id,
-            razorpaySignature: response.razorpay_signature,
-          });
-          clearCart();
-          router.push(`/checkout/success?order_id=${orderId}`);
+          try {
+            await api.post('/payments/razorpay/verify', {
+              orderId,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+            });
+            clearCart();
+            router.push(`/checkout/success?order_id=${orderId}`);
+          } catch (err: any) {
+            toast.error(
+              err?.message || 'We could not verify your payment. If money was deducted, contact support with your order ID.',
+            );
+          }
+        },
+        modal: {
+          // User closed the popup without paying — let them know nothing
+          // was charged, rather than leaving them wondering what happened.
+          ondismiss: () => {
+            toast('Payment cancelled — your order was not placed.', { icon: 'ℹ️' });
+            setLoading(false);
+          },
         },
         prefill: { name: address.fullName, contact: address.phone },
         theme: { color: '#c85a28' },
       });
+
+      // A real payment attempt (e.g. card declined) — distinct from the user
+      // just closing the popup, which is handled by modal.ondismiss above.
+      rzp.on('payment.failed', (response: any) => {
+        toast.error(response?.error?.description || 'Payment failed. Please try again.');
+        setLoading(false);
+      });
+
       rzp.open();
     } catch (err: any) {
       toast.error(err?.message || 'Something went wrong placing your order.');
