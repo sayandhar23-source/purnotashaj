@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import Razorpay from 'razorpay';
@@ -45,7 +45,7 @@ export class PaymentsService {
   // --- Stripe ---
   async createStripeCheckoutSession(orderId: string) {
     const order = await this.orderModel.findById(orderId);
-    if (!order) throw new Error('Order not found');
+    if (!order) throw new NotFoundException('Order not found');
 
     const session = await this.stripe.checkout.sessions.create({
       mode: 'payment',
@@ -99,13 +99,29 @@ export class PaymentsService {
   // --- Razorpay ---
   async createRazorpayOrder(orderId: string) {
     const order = await this.orderModel.findById(orderId);
-    if (!order) throw new Error('Order not found');
+    if (!order) throw new NotFoundException('Order not found');
 
-    const rpOrder = await this.getRazorpay().orders.create({
-      amount: Math.round(order.totalAmount * 100),
-      currency: order.currency || 'INR',
-      receipt: orderId,
-    });
+    // Razorpay rejects orders under ₹1 (100 paise) outright — check here first
+    // so the failure is a clear message, not a confusing API error.
+    if (order.totalAmount < 1) {
+      throw new BadRequestException('Order amount must be at least ₹1.');
+    }
+
+    let rpOrder;
+    try {
+      rpOrder = await this.getRazorpay().orders.create({
+        amount: Math.round(order.totalAmount * 100),
+        currency: order.currency || 'INR',
+        receipt: orderId,
+      });
+    } catch (err: any) {
+      // Razorpay's SDK throws its own error shape on auth failures, invalid
+      // params, etc. — wrap it so callers get a clean message either way.
+      if (err?.statusCode === 401) {
+        throw new BadRequestException('Payment gateway authentication failed — check the Razorpay API keys.');
+      }
+      throw new InternalServerErrorException('Could not create the payment order. Please try again.');
+    }
 
     order.paymentReference = rpOrder.id;
     await order.save();
@@ -131,23 +147,28 @@ export class PaymentsService {
       .digest('hex');
 
     const isValid = expectedSignature === params.razorpaySignature;
-    if (isValid) {
-      const order = await this.orderModel
-        .findByIdAndUpdate(
-          params.orderId,
-          { status: 'paid', paymentReference: params.razorpayPaymentId },
-          { new: true },
-        )
-        .populate('user', 'email');
-      if (order) {
-        const customer: any = order.user;
-        await this.mailService.sendAdminNewOrderNotification(
-          order._id.toString(),
-          order.totalAmount,
-          customer?.email || 'unknown',
-        );
-      }
+    if (!isValid) {
+      // Do NOT mark the order as paid — and surface this as a real 400, not
+      // a 200 with a "verified: false" body, so the frontend's error
+      // handling path actually triggers.
+      throw new BadRequestException('Payment verification failed — the signature did not match.');
     }
-    return { verified: isValid };
+
+    const order = await this.orderModel
+      .findByIdAndUpdate(
+        params.orderId,
+        { status: 'paid', paymentReference: params.razorpayPaymentId },
+        { new: true },
+      )
+      .populate('user', 'email');
+    if (order) {
+      const customer: any = order.user;
+      await this.mailService.sendAdminNewOrderNotification(
+        order._id.toString(),
+        order.totalAmount,
+        customer?.email || 'unknown',
+      );
+    }
+    return { verified: true };
   }
 }
