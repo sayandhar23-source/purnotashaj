@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString, Matches, Max, Min } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, Matches, Max, Min } from 'class-validator';
 
 export class UpdateSettingsDto {
   @IsOptional()
@@ -33,4 +33,43 @@ export class UpdateSettingsDto {
   @Min(0)
   @Max(100)
   referralCommissionPercent?: number;
+
+  @IsOptional()
+  @IsString()
+  shippingOriginState?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  sameStateDeliveryMinDays?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  sameStateDeliveryMaxDays?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  otherStateDeliveryMinDays?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  otherStateDeliveryMaxDays?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  remoteDeliveryMinDays?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  remoteDeliveryMaxDays?: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  remoteStates?: string[];
 }
