@@ -12,6 +12,7 @@ import SaleCountdown from '@/components/SaleCountdown';
 import { useWishlist } from '@/lib/wishlist-context';
 import { useCart } from '@/lib/cart-context';
 import Breadcrumbs, { Crumb } from '@/components/Breadcrumbs';
+import DeliveryEstimate from '@/components/DeliveryEstimate';
 
 type Variant = {
   _id: string;
@@ -292,6 +293,8 @@ export default function ProductDetailClient({
           <p className="text-xs text-gray-500">
             Prefer to order over chat? Message us on WhatsApp with the product details pre-filled instead.
           </p>
+
+          <DeliveryEstimate />
         </div>
 
         {product.description && (
