@@ -2,11 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { MessageCircle, Instagram, Facebook, Youtube, Send, Percent } from 'lucide-react';
+import { MessageCircle, Instagram, Facebook, Youtube, Send, Percent, Truck } from 'lucide-react';
 import AccountSettingsForm from '@/components/AccountSettingsForm';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api';
 import { useDocumentTitle } from '@/lib/useDocumentTitle';
+
+const INDIAN_STATES = [
+  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat',
+  'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh',
+  'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
+  'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh',
+  'Uttarakhand', 'West Bengal', 'Andaman and Nicobar Islands', 'Chandigarh',
+  'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Jammu and Kashmir', 'Ladakh',
+  'Lakshadweep', 'Puducherry',
+];
 
 export default function AdminSettingsPage() {
   useDocumentTitle('Admin · Settings');
@@ -26,6 +36,17 @@ export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savingSocial, setSavingSocial] = useState(false);
+  const [delivery, setDelivery] = useState({
+    shippingOriginState: 'West Bengal',
+    sameStateDeliveryMinDays: 3,
+    sameStateDeliveryMaxDays: 6,
+    otherStateDeliveryMinDays: 7,
+    otherStateDeliveryMaxDays: 10,
+    remoteDeliveryMinDays: 12,
+    remoteDeliveryMaxDays: 15,
+    remoteStates: [] as string[],
+  });
+  const [savingDelivery, setSavingDelivery] = useState(false);
 
   useEffect(() => {
     api
@@ -40,9 +61,41 @@ export default function AdminSettingsPage() {
           youtubeUrl: res.data.youtubeUrl || '',
           pinterestUrl: res.data.pinterestUrl || '',
         });
+        setDelivery({
+          shippingOriginState: res.data.shippingOriginState || 'West Bengal',
+          sameStateDeliveryMinDays: res.data.sameStateDeliveryMinDays ?? 3,
+          sameStateDeliveryMaxDays: res.data.sameStateDeliveryMaxDays ?? 6,
+          otherStateDeliveryMinDays: res.data.otherStateDeliveryMinDays ?? 7,
+          otherStateDeliveryMaxDays: res.data.otherStateDeliveryMaxDays ?? 10,
+          remoteDeliveryMinDays: res.data.remoteDeliveryMinDays ?? 12,
+          remoteDeliveryMaxDays: res.data.remoteDeliveryMaxDays ?? 15,
+          remoteStates: res.data.remoteStates || [],
+        });
       })
       .finally(() => setLoading(false));
   }, []);
+
+  const handleSaveDelivery = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingDelivery(true);
+    try {
+      await api.patch('/settings', delivery);
+      toast.success('Delivery estimate settings updated.');
+    } catch (err: any) {
+      toast.error(err?.message || 'Could not update delivery settings.');
+    } finally {
+      setSavingDelivery(false);
+    }
+  };
+
+  const toggleRemoteState = (state: string) => {
+    setDelivery((prev) => ({
+      ...prev,
+      remoteStates: prev.remoteStates.includes(state)
+        ? prev.remoteStates.filter((s) => s !== state)
+        : [...prev.remoteStates, state],
+    }));
+  };
 
   const handleSaveWhatsapp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -273,6 +326,84 @@ export default function AdminSettingsPage() {
               </label>
               <button type="submit" disabled={savingSocial} className="btn-primary w-full">
                 {savingSocial ? 'Saving...' : 'Update Social Links'}
+              </button>
+            </>
+          )}
+        </form>
+
+        <form onSubmit={handleSaveDelivery} className="card p-6 space-y-3">
+          <h3 className="font-semibold flex items-center gap-2">
+            <Truck size={18} className="text-brand-500" />
+            Delivery Estimate
+          </h3>
+          <p className="text-xs text-gray-500">
+            Powers the "Check delivery date" box on product pages. Estimates are calculated from
+            today's date using these day ranges — no courier account needed.
+          </p>
+          {loading ? (
+            <p className="text-sm text-gray-400">Loading...</p>
+          ) : (
+            <>
+              <div>
+                <label className="text-xs text-gray-500 block mb-1">You ship from</label>
+                <select
+                  className="input"
+                  value={delivery.shippingOriginState}
+                  onChange={(e) => setDelivery({ ...delivery, shippingOriginState: e.target.value })}
+                >
+                  {INDIAN_STATES.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+
+              {[
+                { label: 'Same state', minKey: 'sameStateDeliveryMinDays', maxKey: 'sameStateDeliveryMaxDays' },
+                { label: 'Other states', minKey: 'otherStateDeliveryMinDays', maxKey: 'otherStateDeliveryMaxDays' },
+                { label: 'Remote areas', minKey: 'remoteDeliveryMinDays', maxKey: 'remoteDeliveryMaxDays' },
+              ].map(({ label, minKey, maxKey }) => (
+                <div key={label}>
+                  <label className="text-xs text-gray-500 block mb-1">{label} (days)</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min={0}
+                      className="input"
+                      value={(delivery as any)[minKey]}
+                      onChange={(e) => setDelivery({ ...delivery, [minKey]: Number(e.target.value) })}
+                    />
+                    <span className="text-gray-400 text-sm">to</span>
+                    <input
+                      type="number"
+                      min={0}
+                      className="input"
+                      value={(delivery as any)[maxKey]}
+                      onChange={(e) => setDelivery({ ...delivery, [maxKey]: Number(e.target.value) })}
+                    />
+                  </div>
+                </div>
+              ))}
+
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">
+                  States treated as "remote areas" (overrides same/other-state rules)
+                </label>
+                <div className="grid grid-cols-2 gap-1.5 max-h-40 overflow-y-auto border rounded-lg p-2">
+                  {INDIAN_STATES.map((s) => (
+                    <label key={s} className="flex items-center gap-1.5 text-xs">
+                      <input
+                        type="checkbox"
+                        checked={delivery.remoteStates.includes(s)}
+                        onChange={() => toggleRemoteState(s)}
+                      />
+                      {s}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <button type="submit" disabled={savingDelivery} className="btn-primary w-full">
+                {savingDelivery ? 'Saving...' : 'Update Delivery Settings'}
               </button>
             </>
           )}
