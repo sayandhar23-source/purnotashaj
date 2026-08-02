@@ -35,7 +35,7 @@ async function getProductsForCategory(node: any): Promise<ProductSummary[]> {
 }
 
 async function getSection(param: string): Promise<ProductSummary[]> {
-  const data = await safeJson(`${API}/products?${param}=true&limit=5`);
+  const data = await safeJson(`${API}/products?${param}=true&limit=10`);
   return data?.products || [];
 }
 
@@ -102,9 +102,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <ProductRow title="Hot Deals Now" viewAllHref="/collection/hot-deals" products={hotDeals} bgColor="#FFE4D6" />
+      <ProductRow title="Hot Deals Now" viewAllHref="/collection/hot-deals" products={hotDeals} bgColor="#E5342B" dark />
       <ProductRow title="New Arrivals" viewAllHref="/collection/new-arrivals" products={newArrivals} bgColor="#DCF2E3" />
-      <ProductRow title="Most Selling" viewAllHref="/collection/best-sellers" products={bestSellers} bgColor="#FDF0D5" />
+      <ProductRow title="Most Selling" viewAllHref="/collection/best-sellers" products={bestSellers} bgColor="#7C3AED" dark />
 
       {categoryTree.map((cat: any, i: number) => (
         <ProductRow
