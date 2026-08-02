@@ -31,6 +31,8 @@ const emptyForm = {
   saleEnabled: false,
   salePrice: undefined as number | undefined,
   saleEndsAt: '',
+  trackStock: false,
+  stock: undefined as number | undefined,
   variants: [] as Variant[],
 };
 
@@ -73,6 +75,8 @@ export default function ProductForm({
           saleEnabled: !!editingProduct.saleEnabled,
           salePrice: editingProduct.salePrice,
           saleEndsAt: toDatetimeLocal(editingProduct.saleEndsAt),
+          trackStock: !!editingProduct.trackStock,
+          stock: editingProduct.stock,
           variants: editingProduct.variants || [],
         }
       : { ...emptyForm },
@@ -241,6 +245,26 @@ export default function ProductForm({
           Hot Deals Now
         </label>
       </div>
+
+      {form.variants.length === 0 && (
+        <div className="border rounded-lg p-4 space-y-3">
+          <label className="flex items-center gap-2 text-sm font-medium">
+            <input type="checkbox" checked={form.trackStock}
+              onChange={(e) => setForm({ ...form, trackStock: e.target.checked })} />
+            Track stock for this product
+          </label>
+          <p className="text-xs text-gray-500">
+            Off by default — the product always shows as available. Turn this on to mark it "Sold
+            Out" automatically once stock hits zero. (Products with variants track stock per
+            variant instead, above.)
+          </p>
+          {form.trackStock && (
+            <input type="number" min={0} className="input" placeholder="Quantity in stock"
+              value={form.stock ?? ''}
+              onChange={(e) => setForm({ ...form, stock: e.target.value ? Number(e.target.value) : undefined })} />
+          )}
+        </div>
+      )}
 
       <div>
         <div className="flex items-center justify-between mb-2">
