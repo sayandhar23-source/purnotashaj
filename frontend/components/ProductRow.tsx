@@ -45,12 +45,13 @@ export default function ProductRow({
             >
               View all <ChevronRight size={16} />
             </Link>
-            {/* Prev/next buttons — desktop only; mobile keeps native touch-swipe */}
-            <div className="hidden sm:flex items-center gap-1.5">
+            {/* Prev/next buttons — shown at every screen size now; on mobile
+                these sit alongside native touch-swipe, both work together */}
+            <div className="flex items-center gap-1.5">
               <button
                 onClick={() => scrollByAmount(-1)}
                 aria-label="Previous"
-                className={`w-8 h-8 rounded-full flex items-center justify-center border ${
+                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border ${
                   dark ? 'border-white/40 text-white hover:bg-white/10' : 'border-gray-300 hover:bg-gray-50'
                 }`}
               >
@@ -59,7 +60,7 @@ export default function ProductRow({
               <button
                 onClick={() => scrollByAmount(1)}
                 aria-label="Next"
-                className={`w-8 h-8 rounded-full flex items-center justify-center border ${
+                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border ${
                   dark ? 'border-white/40 text-white hover:bg-white/10' : 'border-gray-300 hover:bg-gray-50'
                 }`}
               >
@@ -80,7 +81,7 @@ export default function ProductRow({
         >
           {products.slice(0, 10).map((p) => (
             <div key={p._id} className="w-[46%] sm:w-[30%] lg:w-[220px] shrink-0 snap-start">
-              <ProductCard product={p} />
+              <ProductCard product={p} lightText={dark} />
             </div>
           ))}
         </div>
