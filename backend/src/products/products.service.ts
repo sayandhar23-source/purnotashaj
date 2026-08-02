@@ -47,7 +47,13 @@ export class ProductsService {
   // never stored, always derived fresh from saleEnabled/salePrice/saleStartsAt/saleEndsAt.
   private withSaleInfo(product: any) {
     const obj = typeof product.toObject === 'function' ? product.toObject() : product;
-    return { ...obj, saleInfo: computeSaleInfo(obj) };
+    const isSoldOut =
+      obj.variants?.length > 0
+        ? (obj.totalStock ?? 0) <= 0
+        : obj.trackStock
+          ? (obj.stock ?? 0) <= 0
+          : false;
+    return { ...obj, saleInfo: computeSaleInfo(obj), isSoldOut };
   }
 
   private withSaleInfoList(products: any[]) {
