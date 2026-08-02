@@ -29,6 +29,23 @@ export class ProductVariant {
 
 export const ProductVariantSchema = SchemaFactory.createForClass(ProductVariant);
 
+@Schema({ _id: false })
+export class ImageMeta {
+  @Prop({ required: true })
+  url: string; // matches the corresponding entry in Product.images by value
+
+  @Prop({ default: '' })
+  name: string; // SEO-friendly identifier, auto-slugified as admin types it
+
+  @Prop({ default: '' })
+  title: string; // HTML title attribute
+
+  @Prop({ default: '' })
+  alt: string; // HTML alt attribute — the field that actually matters most for image SEO/accessibility
+}
+
+export const ImageMetaSchema = SchemaFactory.createForClass(ImageMeta);
+
 @Schema({ timestamps: true })
 export class Product {
   @Prop({ required: true })
@@ -45,6 +62,12 @@ export class Product {
 
   @Prop({ type: [String], default: [] })
   images: string[];
+
+  // SEO metadata per image, kept as a SEPARATE array from `images` (matched by
+  // url) rather than changing images' shape — existing products' images keep
+  // working exactly as before with zero migration; this is purely additive.
+  @Prop({ type: [ImageMetaSchema], default: [] })
+  imageMeta: ImageMeta[];
 
   // A product demo video — either a YouTube link (recommended: upload as
   // "Unlisted") or a direct link to an MP4/WebM file from a proper video host.
