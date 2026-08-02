@@ -20,6 +20,7 @@ export type ProductSummary = {
     discountPercent: number;
     endsAt: string | null;
   };
+  isSoldOut?: boolean;
 };
 
 export default function ProductCard({ product }: { product: ProductSummary }) {
@@ -86,7 +87,14 @@ export default function ProductCard({ product }: { product: ProductSummary }) {
             No image
           </div>
         )}
-        {discount && (
+        {product.isSoldOut && (
+          <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+            <span className="bg-gray-900 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+              Sold Out
+            </span>
+          </div>
+        )}
+        {!product.isSoldOut && discount && (
           <span className={`absolute top-3 left-3 text-white text-xs font-semibold px-2 py-1 rounded-full ${onSale ? 'bg-red-500' : 'bg-brand-500'}`}>
             {onSale ? `SALE -${discount}%` : `-${discount}%`}
           </span>
