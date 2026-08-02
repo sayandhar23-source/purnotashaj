@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { VariantDto } from './variant.dto';
+import { ImageMetaDto } from './image-meta.dto';
 
 export class CreateProductDto {
   @IsString()
@@ -29,6 +30,12 @@ export class CreateProductDto {
   @IsArray()
   @ArrayMaxSize(5, { message: 'A product can have at most 5 images.' })
   images?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ImageMetaDto)
+  imageMeta?: ImageMetaDto[];
 
   @IsOptional()
   @IsString()
