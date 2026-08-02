@@ -95,3 +95,14 @@ body { @apply bg-white text-gray-900; }
   background-size: 250% 100%;
   animation: shimmerSweep 1.8s ease-in-out infinite;
 }
+
+/* Hides the native scrollbar on horizontally-scrollable rows (product rows,
+   category sliders) so desktop uses the prev/next buttons instead — has no
+   effect on mobile, where touch-scroll doesn't show a scrollbar anyway. */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
