@@ -23,7 +23,13 @@ export type ProductSummary = {
   isSoldOut?: boolean;
 };
 
-export default function ProductCard({ product }: { product: ProductSummary }) {
+export default function ProductCard({
+  product,
+  lightText,
+}: {
+  product: ProductSummary;
+  lightText?: boolean; // white title/price — for cards sitting on a bold/dark section background
+}) {
   const { isWishlisted, toggle } = useWishlist();
   const [activeImage, setActiveImage] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -120,11 +126,13 @@ export default function ProductCard({ product }: { product: ProductSummary }) {
         </button>
       </div>
       <div className="mt-3">
-        <h3 className="text-sm font-medium text-gray-800 line-clamp-1">{product.title}</h3>
+        <h3 className={`text-sm font-medium line-clamp-1 ${lightText ? 'text-white' : 'text-gray-800'}`}>
+          {product.title}
+        </h3>
         <div className="flex items-center gap-2 mt-1">
-          <span className="font-semibold">₹{displayPrice}</span>
+          <span className={`font-semibold ${lightText ? 'text-white' : ''}`}>₹{displayPrice}</span>
           {strikePrice && strikePrice > displayPrice && (
-            <span className="text-gray-400 text-sm line-through">
+            <span className={`text-sm line-through ${lightText ? 'text-white/60' : 'text-gray-400'}`}>
               ₹{strikePrice}
             </span>
           )}
