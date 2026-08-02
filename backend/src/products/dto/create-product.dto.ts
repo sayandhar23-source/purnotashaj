@@ -88,6 +88,14 @@ export class CreateProductDto {
   saleEndsAt?: string;
 
   @IsOptional()
+  @IsBoolean()
+  trackStock?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  stock?: number;
+
+  @IsOptional()
   @IsArray()
   tags?: string[];
 }
