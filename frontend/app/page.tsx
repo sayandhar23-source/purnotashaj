@@ -44,6 +44,17 @@ async function getSaleBannerContent() {
   return data;
 }
 
+// A rotating palette for the per-category rows, all chosen to work with white
+// text. Saree always gets blue specifically, regardless of its position in
+// the category list — everything else cycles through the rest in order.
+const SAREE_COLOR = '#2563EB';
+const CATEGORY_COLOR_PALETTE = ['#C9971C', '#A63472', '#B5541F', '#D6336C', '#6B3FA0', '#34495E', '#2F855A'];
+
+function getCategoryColor(name: string, index: number) {
+  if (name.trim().toLowerCase() === 'saree') return SAREE_COLOR;
+  return CATEGORY_COLOR_PALETTE[index % CATEGORY_COLOR_PALETTE.length];
+}
+
 export default async function HomePage() {
   const categoryTree = await getCategoryTree();
 
@@ -102,9 +113,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <ProductRow title="Hot Deals Now" viewAllHref="/collection/hot-deals" products={hotDeals} bgColor="#E5342B" dark />
-      <ProductRow title="New Arrivals" viewAllHref="/collection/new-arrivals" products={newArrivals} bgColor="#DCF2E3" />
-      <ProductRow title="Most Selling" viewAllHref="/collection/best-sellers" products={bestSellers} bgColor="#7C3AED" dark />
+      <ProductRow title="Hot Deals Now" viewAllHref="/collection/hot-deals" products={hotDeals} bgColor="#FF6B5B" dark />
+      <ProductRow title="New Arrivals" viewAllHref="/collection/new-arrivals" products={newArrivals} bgColor="#2F9E44" dark />
+      <ProductRow title="Most Selling" viewAllHref="/collection/best-sellers" products={bestSellers} bgColor="#0F7173" dark />
 
       {categoryTree.map((cat: any, i: number) => (
         <ProductRow
@@ -112,6 +123,8 @@ export default async function HomePage() {
           title={cat.name}
           viewAllHref={`/category/${cat.slug}`}
           products={categoryProductLists[i]}
+          bgColor={getCategoryColor(cat.name, i)}
+          dark
         />
       ))}
 
