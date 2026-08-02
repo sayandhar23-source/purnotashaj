@@ -42,6 +42,7 @@ type Product = {
     discountPercent: number;
     endsAt: string | null;
   };
+  isSoldOut?: boolean;
 };
 
 export default function ProductDetailClient({
@@ -96,7 +97,7 @@ export default function ProductDetailClient({
     setTouchStartX(null);
   };
 
-  const isOutOfStock = !!selectedVariant && selectedVariant.stock === 0;
+  const isOutOfStock = selectedVariant ? selectedVariant.stock === 0 : !!product.isSoldOut;
 
   const buildCartItem = () => ({
     productId: product._id,
@@ -262,26 +263,27 @@ export default function ProductDetailClient({
         </div>
 
         <div className="mt-6 max-w-sm space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={handleAddToCart}
-              disabled={isOutOfStock}
-              className="btn-outline flex items-center justify-center gap-1.5 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              <ShoppingBag size={16} />
-              Add to Cart
+          {isOutOfStock ? (
+            <button disabled className="btn-outline w-full text-sm text-gray-400 border-gray-300 cursor-not-allowed">
+              Sold Out
             </button>
-            <button
-              onClick={handleBuyNow}
-              disabled={isOutOfStock}
-              className="btn-primary flex items-center justify-center gap-1.5 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              <Zap size={16} />
-              Buy Now
-            </button>
-          </div>
-          {isOutOfStock && (
-            <p className="text-xs text-red-500">This option is currently out of stock.</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={handleAddToCart}
+                className="btn-outline flex items-center justify-center gap-1.5 text-sm"
+              >
+                <ShoppingBag size={16} />
+                Add to Cart
+              </button>
+              <button
+                onClick={handleBuyNow}
+                className="btn-primary flex items-center justify-center gap-1.5 text-sm"
+              >
+                <Zap size={16} />
+                Buy Now
+              </button>
+            </div>
           )}
 
           <WhatsAppButton
