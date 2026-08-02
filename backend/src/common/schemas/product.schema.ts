@@ -105,6 +105,18 @@ export class Product {
   @Prop({ default: 0 })
   totalStock: number;
 
+  // Stock tracking for products WITHOUT variants — variant products already
+  // track real stock per-variant (totalStock sums those). A simple product's
+  // totalStock always computes to 0 (no variants to sum), so it can't be used
+  // as a sold-out signal on its own — trackStock opts a simple product in
+  // explicitly, defaulting to false so existing products stay "in stock"
+  // rather than all appearing sold out the moment this ships.
+  @Prop({ default: false })
+  trackStock: boolean;
+
+  @Prop()
+  stock?: number;
+
   @Prop({ type: [String], default: [] })
   tags: string[];
 }
