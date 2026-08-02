@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { Heart } from 'lucide-react';
 import { useWishlist } from '@/lib/wishlist-context';
+import { getImageAltTitle } from '@/lib/imageSeo';
 
 export type ProductSummary = {
   _id: string;
@@ -21,6 +22,7 @@ export type ProductSummary = {
     endsAt: string | null;
   };
   isSoldOut?: boolean;
+  imageMeta?: { url: string; name?: string; title?: string; alt?: string }[];
 };
 
 export default function ProductCard({
@@ -76,18 +78,22 @@ export default function ProductCard({
     >
       <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-gray-100">
         {images.length > 0 ? (
-          images.map((img, i) => (
-            <Image
-              key={img + i}
-              src={img}
-              alt={i === activeImage ? product.title : ''}
-              aria-hidden={i === activeImage ? undefined : true}
-              fill
-              className={`object-cover transition-opacity duration-300 ${
-                i === activeImage ? 'opacity-100' : 'opacity-0'
-              }`}
-            />
-          ))
+          images.map((img, i) => {
+            const { alt, title } = getImageAltTitle(img, product.imageMeta, product.title);
+            return (
+              <Image
+                key={img + i}
+                src={img}
+                alt={i === activeImage ? alt : ''}
+                title={i === activeImage ? title : undefined}
+                aria-hidden={i === activeImage ? undefined : true}
+                fill
+                className={`object-cover transition-opacity duration-300 ${
+                  i === activeImage ? 'opacity-100' : 'opacity-0'
+                }`}
+              />
+            );
+          })
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
             No image
