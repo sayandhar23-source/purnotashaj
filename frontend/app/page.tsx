@@ -30,7 +30,7 @@ function collectIds(node: any): string[] {
 
 async function getProductsForCategory(node: any): Promise<ProductSummary[]> {
   const ids = collectIds(node);
-  const data = await safeJson(`${API}/products?categories=${ids.join(',')}&limit=5`);
+  const data = await safeJson(`${API}/products?categories=${ids.join(',')}&limit=10`);
   return data?.products || [];
 }
 
