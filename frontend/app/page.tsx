@@ -102,9 +102,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <ProductRow title="Hot Deals Now" viewAllHref="/collection/hot-deals" products={hotDeals} />
-      <ProductRow title="New Arrivals" viewAllHref="/collection/new-arrivals" products={newArrivals} />
-      <ProductRow title="Most Selling" viewAllHref="/collection/best-sellers" products={bestSellers} />
+      <ProductRow title="Hot Deals Now" viewAllHref="/collection/hot-deals" products={hotDeals} bgColor="#FFE4D6" />
+      <ProductRow title="New Arrivals" viewAllHref="/collection/new-arrivals" products={newArrivals} bgColor="#DCF2E3" />
+      <ProductRow title="Most Selling" viewAllHref="/collection/best-sellers" products={bestSellers} bgColor="#FDF0D5" />
 
       {categoryTree.map((cat: any, i: number) => (
         <ProductRow
