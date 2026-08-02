@@ -4,6 +4,7 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Plus, Trash2 } from 'lucide-react';
 import { api } from '@/lib/api';
+import { slugify } from '@/lib/slugify';
 
 type Variant = {
   name: string;
@@ -20,6 +21,7 @@ const emptyForm = {
   description: '',
   category: '',
   images: [''],
+  imageMeta: [{ name: '', title: '', alt: '' }] as { name: string; title: string; alt: string }[],
   videoUrl: '',
   basePrice: 0,
   compareAtPrice: undefined as number | undefined,
@@ -64,6 +66,10 @@ export default function ProductForm({
           description: editingProduct.description || '',
           category: editingProduct.category?._id || editingProduct.category || '',
           images: editingProduct.images?.length ? editingProduct.images : [''],
+          imageMeta: (editingProduct.images?.length ? editingProduct.images : ['']).map((url: string) => {
+            const existing = editingProduct.imageMeta?.find((m: any) => m.url === url);
+            return { name: existing?.name || '', title: existing?.title || '', alt: existing?.alt || '' };
+          }),
           videoUrl: editingProduct.videoUrl || '',
           basePrice: editingProduct.basePrice,
           compareAtPrice: editingProduct.compareAtPrice,
@@ -82,6 +88,10 @@ export default function ProductForm({
       : { ...emptyForm },
   );
   const [saving, setSaving] = useState(false);
+  // Once admin edits the slug directly, stop auto-generating it from the title.
+  // Existing products' slugs are treated as already "manual" so editing the
+  // title doesn't silently change a live product's URL.
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(!!editingProduct);
 
   const addVariant = () => {
     setForm({
@@ -104,9 +114,13 @@ export default function ProductForm({
     e.preventDefault();
     setSaving(true);
     try {
+      const nonEmptyPairs = form.images
+        .map((url, i) => ({ url, meta: form.imageMeta[i] || { name: '', title: '', alt: '' } }))
+        .filter((pair) => Boolean(pair.url));
       const payload = {
         ...form,
-        images: form.images.filter(Boolean),
+        images: nonEmptyPairs.map((p) => p.url),
+        imageMeta: nonEmptyPairs.map((p) => ({ url: p.url, ...p.meta })),
         saleEndsAt: form.saleEndsAt ? new Date(form.saleEndsAt).toISOString() : undefined,
       };
       if (editingProduct) {
@@ -128,9 +142,15 @@ export default function ProductForm({
     <form onSubmit={handleSubmit} className="card p-6 space-y-4">
       <div className="grid sm:grid-cols-2 gap-4">
         <input className="input" placeholder="Title" required value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })} />
-        <input className="input" placeholder="Slug (url-friendly)" required value={form.slug}
-          onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+          onChange={(e) => {
+            const title = e.target.value;
+            setForm({ ...form, title, slug: slugManuallyEdited ? form.slug : slugify(title) });
+          }} />
+        <input className="input" placeholder="Slug (url-friendly, auto-filled from title)" required value={form.slug}
+          onChange={(e) => {
+            setSlugManuallyEdited(true);
+            setForm({ ...form, slug: e.target.value });
+          }} />
       </div>
 
       <textarea className="input" placeholder="Description" rows={3} value={form.description}
@@ -184,26 +204,65 @@ export default function ProductForm({
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <p className="text-sm font-medium">Image URLs (up to 5 — first one is the main photo)</p>
+          <p className="text-sm font-medium">Images (up to 5 — first one is the main photo)</p>
           <span className="text-xs text-gray-400">{form.images.filter(Boolean).length}/5</span>
         </div>
+        <p className="text-xs text-gray-500 mb-3">
+          Name, title and alt text help search engines understand and rank each photo — alt text
+          especially also matters for accessibility (screen readers).
+        </p>
         {form.images.map((img, i) => (
-          <div key={i} className="flex gap-2 mb-2">
-            <input className="input" placeholder="https://..." value={img}
-              onChange={(e) => {
-                const copy = [...form.images];
-                copy[i] = e.target.value;
-                setForm({ ...form, images: copy });
-              }} />
-            {form.images.length > 1 && (
-              <button type="button" onClick={() => setForm({ ...form, images: form.images.filter((_, idx) => idx !== i) })}
-                className="text-red-500 text-sm px-2">✕</button>
-            )}
+          <div key={i} className="border rounded-lg p-3 mb-3 space-y-2">
+            <div className="flex gap-2">
+              <input className="input" placeholder="https://..." value={img}
+                onChange={(e) => {
+                  const copy = [...form.images];
+                  copy[i] = e.target.value;
+                  setForm({ ...form, images: copy });
+                }} />
+              {form.images.length > 1 && (
+                <button type="button" onClick={() => {
+                  setForm({
+                    ...form,
+                    images: form.images.filter((_, idx) => idx !== i),
+                    imageMeta: form.imageMeta.filter((_, idx) => idx !== i),
+                  });
+                }}
+                  className="text-red-500 text-sm px-2 shrink-0">✕</button>
+              )}
+            </div>
+            <div className="grid sm:grid-cols-3 gap-2">
+              <input className="input text-xs" placeholder="Name (SEO — auto-formatted)"
+                value={form.imageMeta[i]?.name || ''}
+                onChange={(e) => {
+                  const copy = [...form.imageMeta];
+                  copy[i] = { ...copy[i], name: slugify(e.target.value) };
+                  setForm({ ...form, imageMeta: copy });
+                }} />
+              <input className="input text-xs" placeholder="Title attribute"
+                value={form.imageMeta[i]?.title || ''}
+                onChange={(e) => {
+                  const copy = [...form.imageMeta];
+                  copy[i] = { ...copy[i], title: e.target.value };
+                  setForm({ ...form, imageMeta: copy });
+                }} />
+              <input className="input text-xs" placeholder="Alt text"
+                value={form.imageMeta[i]?.alt || ''}
+                onChange={(e) => {
+                  const copy = [...form.imageMeta];
+                  copy[i] = { ...copy[i], alt: e.target.value };
+                  setForm({ ...form, imageMeta: copy });
+                }} />
+            </div>
           </div>
         ))}
         {form.images.length < 5 && (
-          <button type="button" onClick={() => setForm({ ...form, images: [...form.images, ''] })}
-            className="text-sm text-brand-500">+ Add image URL</button>
+          <button type="button" onClick={() => setForm({
+            ...form,
+            images: [...form.images, ''],
+            imageMeta: [...form.imageMeta, { name: '', title: '', alt: '' }],
+          })}
+            className="text-sm text-brand-500">+ Add image</button>
         )}
       </div>
 
