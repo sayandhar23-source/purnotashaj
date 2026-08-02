@@ -13,6 +13,7 @@ import { useWishlist } from '@/lib/wishlist-context';
 import { useCart } from '@/lib/cart-context';
 import Breadcrumbs, { Crumb } from '@/components/Breadcrumbs';
 import DeliveryEstimate from '@/components/DeliveryEstimate';
+import { getImageAltTitle } from '@/lib/imageSeo';
 
 type Variant = {
   _id: string;
@@ -43,6 +44,7 @@ type Product = {
     endsAt: string | null;
   };
   isSoldOut?: boolean;
+  imageMeta?: { url: string; name?: string; title?: string; alt?: string }[];
 };
 
 export default function ProductDetailClient({
@@ -138,7 +140,8 @@ export default function ProductDetailClient({
           {images[activeImage] ? (
             <Image
               src={images[activeImage]}
-              alt={product.title}
+              alt={getImageAltTitle(images[activeImage], product.imageMeta, product.title).alt}
+              title={getImageAltTitle(images[activeImage], product.imageMeta, product.title).title}
               fill
               className="object-cover"
               priority
