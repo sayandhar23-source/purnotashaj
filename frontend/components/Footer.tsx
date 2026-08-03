@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Instagram, Facebook, Youtube } from 'lucide-react';
 import Newsletter from './Newsletter';
 import AnimatedLogo from './AnimatedLogo';
+import FooterLocationTime from './FooterLocationTime';
 
 const API = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api').replace(/\/+$/, '');
 
@@ -132,6 +133,7 @@ export default async function Footer() {
         <p className="text-center text-xs text-gray-500 mt-10">
           © {new Date().getFullYear()} Purnota Shaj. All rights reserved.
         </p>
+        <FooterLocationTime />
       </div>
     </footer>
   );
