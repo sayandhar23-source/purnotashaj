@@ -20,7 +20,7 @@ export default function DeliveryEstimate() {
     setError('');
     setEstimate(null);
     if (!/^[1-9][0-9]{5}$/.test(pincode)) {
-      setError('Enter a valid 6-digit pincode.');
+      setError('Enter a valid 6-digit Indian pincode. We only deliver within India for now — international shipping is coming soon.');
       return;
     }
     setLoading(true);
