@@ -1,3 +1,5 @@
+export const metadata = { title: 'Contact Us | Purnota Shaj' };
+
 export default function ContactPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -8,7 +10,7 @@ export default function ContactPage() {
         </p>
         <div>
           <p className="font-medium text-gray-800">Email</p>
-          <p>support@purnotashaj.com</p>
+          <p>contactpurnotashaj@gmail.com</p>
         </div>
         <div>
           <p className="font-medium text-gray-800">WhatsApp</p>
