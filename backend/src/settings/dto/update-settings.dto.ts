@@ -74,6 +74,6 @@ export class UpdateSettingsDto {
   remoteStates?: string[];
 
   @IsOptional()
-  @IsIn(['lotus', 'marigold', 'peacock', 'mandala', 'henna', 'diya', 'bel-patra', 'temple-bell', 'swastika', 'none'])
+  @IsIn(['lotus', 'marigold', 'peacock', 'mandala', 'henna', 'diya', 'temple-bell', 'swastika', 'none'])
   activeDivider?: string;
 }
