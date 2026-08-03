@@ -22,9 +22,18 @@ export class CurrencyService {
       const url = `https://api.frankfurter.dev/v2/rates?base=INR&quotes=${TARGET_CURRENCIES.join(',')}`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`Frankfurter returned ${res.status}`);
-      const data = await res.json();
+      const rows = await res.json();
 
-      this.cache = { rates: data.rates || {}, updatedAt: Date.now() };
+      // The v2 API returns an array of { quote, rate } rows, not a single
+      // object with a `rates` map — reshape it into the lookup we actually want.
+      const rates: Record<string, number> = {};
+      if (Array.isArray(rows)) {
+        for (const row of rows) {
+          if (row?.quote && typeof row.rate === 'number') rates[row.quote] = row.rate;
+        }
+      }
+
+      this.cache = { rates, updatedAt: Date.now() };
       return { base: 'INR', rates: this.cache.rates, updatedAt: this.cache.updatedAt };
     } catch (err) {
       this.logger.error(`Failed to fetch exchange rates: ${err}`);
