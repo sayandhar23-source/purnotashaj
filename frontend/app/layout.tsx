@@ -3,6 +3,7 @@ import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 import { CartProvider } from '@/lib/cart-context';
 import { WishlistProvider } from '@/lib/wishlist-context';
+import { CurrencyProvider } from '@/lib/currency-context';
 import { Toaster } from 'react-hot-toast';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -35,12 +36,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
-              <ReferralCapture />
-              <Navbar />
-              <main className="min-h-screen">{children}</main>
-              <Footer />
-              <LiveChatWidget />
-              <Toaster position="top-center" />
+              <CurrencyProvider>
+                <ReferralCapture />
+                <Navbar />
+                <main className="min-h-screen">{children}</main>
+                <Footer />
+                <LiveChatWidget />
+                <Toaster position="top-center" />
+              </CurrencyProvider>
             </WishlistProvider>
           </CartProvider>
         </AuthProvider>
