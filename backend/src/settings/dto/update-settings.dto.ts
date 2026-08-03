@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsOptional, IsString, Matches, Max, Min } from 'class-validator';
+import { IsArray, IsIn, IsNumber, IsOptional, IsString, Matches, Max, Min } from 'class-validator';
 
 export class UpdateSettingsDto {
   @IsOptional()
@@ -72,4 +72,8 @@ export class UpdateSettingsDto {
   @IsArray()
   @IsString({ each: true })
   remoteStates?: string[];
+
+  @IsOptional()
+  @IsIn(['lotus', 'marigold', 'peacock', 'mandala', 'henna', 'diya', 'bel-patra', 'temple-bell', 'swastika', 'none'])
+  activeDivider?: string;
 }
