@@ -2,6 +2,7 @@ import Link from 'next/link';
 import TempleSaleBanner from '@/components/TempleSaleBanner';
 import ProductRow from '@/components/ProductRow';
 import { ProductSummary } from '@/components/ProductCard';
+import SectionDivider from '@/components/dividers/SectionDivider';
 
 const API = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api').replace(/\/+$/, '');
 
@@ -44,6 +45,11 @@ async function getSaleBannerContent() {
   return data;
 }
 
+async function getStoreSettings() {
+  const data = await safeJson(`${API}/settings`);
+  return data;
+}
+
 // A rotating palette for the per-category rows, all chosen to work with white
 // text. Saree always gets blue specifically, regardless of its position in
 // the category list — everything else cycles through the rest in order.
@@ -58,12 +64,13 @@ function getCategoryColor(name: string, index: number) {
 export default async function HomePage() {
   const categoryTree = await getCategoryTree();
 
-  const [newArrivals, bestSellers, hotDeals, categoryProductLists, bannerContent] = await Promise.all([
+  const [newArrivals, bestSellers, hotDeals, categoryProductLists, bannerContent, settings] = await Promise.all([
     getSection('newArrival'),
     getSection('bestSeller'),
     getSection('hotDeal'),
     Promise.all(categoryTree.map((cat: any) => getProductsForCategory(cat))),
     getSaleBannerContent(),
+    getStoreSettings(),
   ]);
 
   return (
@@ -98,6 +105,8 @@ export default async function HomePage() {
         </Link>
       </div>
 
+      <SectionDivider id={settings?.activeDivider} />
+
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <h2 className="text-xl font-serif font-semibold mb-6">Shop by Category</h2>
         <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory">
@@ -127,6 +136,8 @@ export default async function HomePage() {
           dark
         />
       ))}
+
+      <SectionDivider id={settings?.activeDivider} />
 
       <div className="h-8" />
     </div>
