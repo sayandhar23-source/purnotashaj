@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Heart } from 'lucide-react';
 import { useWishlist } from '@/lib/wishlist-context';
 import { getImageAltTitle } from '@/lib/imageSeo';
+import { useCurrency } from '@/lib/currency-context';
 
 export type ProductSummary = {
   _id: string;
@@ -33,6 +34,7 @@ export default function ProductCard({
   lightText?: boolean; // white title/price — for cards sitting on a bold/dark section background
 }) {
   const { isWishlisted, toggle } = useWishlist();
+  const { formatPrice } = useCurrency();
   const [activeImage, setActiveImage] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -136,10 +138,10 @@ export default function ProductCard({
           {product.title}
         </h3>
         <div className="flex items-center gap-2 mt-1">
-          <span className={`font-semibold ${lightText ? 'text-white' : ''}`}>₹{displayPrice}</span>
+          <span className={`font-semibold ${lightText ? 'text-white' : ''}`}>{formatPrice(displayPrice)}</span>
           {strikePrice && strikePrice > displayPrice && (
             <span className={`text-sm line-through ${lightText ? 'text-white/60' : 'text-gray-400'}`}>
-              ₹{strikePrice}
+              {formatPrice(strikePrice)}
             </span>
           )}
         </div>
