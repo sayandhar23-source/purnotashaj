@@ -1,42 +1,18 @@
 import { Controller, Get, Req } from '@nestjs/common';
 import { Request } from 'express';
+import { GeoService } from './geo.service';
 
 @Controller('geo')
 export class GeoController {
-  // Extracts the real visitor IP — Render sits behind a proxy, so the
-  // original client IP arrives via X-Forwarded-For, not the socket address.
-  private getClientIp(req: Request): string | null {
-    const forwarded = req.headers['x-forwarded-for'];
-    if (forwarded) {
-      const first = Array.isArray(forwarded) ? forwarded[0] : forwarded.split(',')[0];
-      return first.trim();
-    }
-    return req.socket?.remoteAddress || null;
-  }
+  constructor(private geoService: GeoService) {}
 
   @Get('me')
   async getMyLocation(@Req() req: Request) {
-    const ip = this.getClientIp(req);
-
-    // Local/private IPs (dev environment, or if forwarding isn't set up)
-    // can't be geolocated — fail quietly rather than returning garbage.
-    if (!ip || ip === '::1' || ip.startsWith('127.') || ip.startsWith('10.') || ip.startsWith('192.168.')) {
-      return { available: false };
-    }
-
-    try {
-      const res = await fetch(`https://free.freeipapi.com/api/json/${ip}`);
-      if (!res.ok) return { available: false };
-      const data = await res.json();
-
-      return {
-        available: true,
-        city: data.cityName || null,
-        region: data.regionName || null,
-        country: data.countryName || null,
-      };
-    } catch {
-      return { available: false };
-    }
+    const ip = this.geoService.getClientIp(req);
+    const geo = await this.geoService.lookup(ip);
+    return {
+      ...geo,
+      isIndia: geo.available ? geo.countryCode === 'IN' || geo.country === 'India' : true,
+    };
   }
 }
