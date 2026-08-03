@@ -14,6 +14,7 @@ import { useCart } from '@/lib/cart-context';
 import Breadcrumbs, { Crumb } from '@/components/Breadcrumbs';
 import DeliveryEstimate from '@/components/DeliveryEstimate';
 import { getImageAltTitle } from '@/lib/imageSeo';
+import { useCurrency } from '@/lib/currency-context';
 
 type Variant = {
   _id: string;
@@ -64,6 +65,7 @@ export default function ProductDetailClient({
   const [activeImage, setActiveImage] = useState(0);
   const [qty, setQty] = useState(1);
   const { isWishlisted, toggle } = useWishlist();
+  const { formatPrice } = useCurrency();
   const wishlisted = isWishlisted(product._id);
   const { addItem, clearCart } = useCart();
   const router = useRouter();
@@ -208,9 +210,9 @@ export default function ProductDetailClient({
         <h1 className="text-2xl md:text-3xl font-serif font-semibold mt-1">{product.title}</h1>
 
         <div className="flex items-center gap-3 mt-4">
-          <span className="text-2xl font-bold">₹{price}</span>
+          <span className="text-2xl font-bold">{formatPrice(price)}</span>
           {compareAt && compareAt > price && (
-            <span className="text-gray-400 line-through">₹{compareAt}</span>
+            <span className="text-gray-400 line-through">{formatPrice(compareAt)}</span>
           )}
           {onSale && product.saleInfo!.discountPercent > 0 && (
             <span className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
