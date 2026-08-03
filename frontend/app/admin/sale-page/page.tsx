@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
 import { SALE_BANNER_TEMPLATES, SaleBannerTemplateId } from '@/components/sale-banner-templates/config';
+import { DIVIDERS, DividerId } from '@/components/dividers/config';
 import { useDocumentTitle } from '@/lib/useDocumentTitle';
 
 export default function AdminSalePagePage() {
@@ -17,6 +18,7 @@ export default function AdminSalePagePage() {
     isActive: true,
     activeTemplate: 'festive-sale' as SaleBannerTemplateId,
   });
+  const [activeDivider, setActiveDivider] = useState<DividerId>('none');
   const [categories, setCategories] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,14 +28,16 @@ export default function AdminSalePagePage() {
   const load = async () => {
     setLoading(true);
     try {
-      const [contentRes, categoriesRes, productsRes] = await Promise.all([
+      const [contentRes, categoriesRes, productsRes, settingsRes] = await Promise.all([
         api.get('/sale-banner'),
         api.get('/categories/admin/all'),
         api.get('/products/admin/all', { params: { limit: 500 } }),
+        api.get('/settings'),
       ]);
       setContent(contentRes.data);
       setCategories(categoriesRes.data);
       setProducts(productsRes.data.products);
+      setActiveDivider(settingsRes.data?.activeDivider || 'none');
     } finally {
       setLoading(false);
     }
@@ -65,6 +69,18 @@ export default function AdminSalePagePage() {
     } catch (err: any) {
       toast.error(err?.message || 'Could not activate template.');
       setContent((prev) => ({ ...prev, activeTemplate: previous }));
+    }
+  };
+
+  const activateDivider = async (id: DividerId) => {
+    const previous = activeDivider;
+    setActiveDivider(id);
+    try {
+      await api.patch('/settings', { activeDivider: id });
+      toast.success(id === 'none' ? 'Section dividers turned off.' : `"${DIVIDERS[id as Exclude<DividerId, 'none'>].label}" is now live.`);
+    } catch (err: any) {
+      toast.error(err?.message || 'Could not activate divider.');
+      setActiveDivider(previous);
     }
   };
 
@@ -194,6 +210,50 @@ export default function AdminSalePagePage() {
             );
           })}
         </div>
+      </div>
+
+      <div className="card p-6 mb-10">
+        <h2 className="font-semibold mb-1">Section divider</h2>
+        <p className="text-xs text-gray-500 mb-4">
+          A small decorative ornament shown between homepage sections. Pick one, or turn it off.
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-3">
+          {(Object.keys(DIVIDERS) as Exclude<DividerId, 'none'>[]).map((id) => {
+            const { Component, label } = DIVIDERS[id];
+            const active = activeDivider === id;
+            return (
+              <button
+                key={id}
+                onClick={() => activateDivider(id)}
+                className={`text-left rounded-xl border-2 overflow-hidden transition-colors ${
+                  active ? 'border-brand-500' : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center justify-center bg-white px-3 py-6">
+                  <div className="w-full">
+                    <Component />
+                  </div>
+                </div>
+                <div className="p-2.5 flex items-center justify-between">
+                  <span className="text-xs font-medium">{label}</span>
+                  {active && (
+                    <span className="text-[10px] bg-brand-500 text-white px-2 py-0.5 rounded-full shrink-0">
+                      Active
+                    </span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        <button
+          onClick={() => activateDivider('none')}
+          className={`text-xs px-3 py-1.5 rounded-full border ${
+            activeDivider === 'none' ? 'border-brand-500 bg-brand-50 text-brand-600' : 'border-gray-300 text-gray-500'
+          }`}
+        >
+          No divider
+        </button>
       </div>
 
       <div className="card p-6 mb-10">
