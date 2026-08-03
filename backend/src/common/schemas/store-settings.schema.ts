@@ -71,6 +71,10 @@ export class StoreSettings {
     ],
   })
   remoteStates: string[];
+
+  // Decorative section divider shown between homepage sections. 'none' hides it entirely.
+  @Prop({ default: 'none' })
+  activeDivider: string;
 }
 
 export const StoreSettingsSchema = SchemaFactory.createForClass(StoreSettings);
