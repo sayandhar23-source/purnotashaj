@@ -3,10 +3,10 @@
 // these render fine as server components wherever they're placed.
 
 export function LotusDivider() {
-  const beadDelays = [0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95, 1.05, 1.15, 1.25, 1.35, 1.45];
-  const beadRadii = [1.8, 1.8, 1.8, 1.8, 1.6, 1.6, 1.6, 1.6, 1.4, 1.4, 1.4, 1.2, 1.2, 1.2, 1.2];
-  const leftXs = [290, 270, 250, 230, 210, 190, 170, 150, 130, 110, 90, 70, 50, 30, 10];
-  const rightXs = [390, 410, 430, 450, 470, 490, 510, 530, 550, 570, 590, 610, 630, 650, 670];
+  const beadDelays = [0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95, 1.05, 1.15, 1.25, 1.35];
+  const beadRadii = [1.8, 1.8, 1.8, 1.6, 1.6, 1.6, 1.6, 1.4, 1.4, 1.4, 1.2, 1.2, 1.2, 1.2];
+  const leftXs = [270, 250, 230, 210, 190, 170, 150, 130, 110, 90, 70, 50, 30, 10];
+  const rightXs = [410, 430, 450, 470, 490, 510, 530, 550, 570, 590, 610, 630, 650, 670];
 
   return (
     <svg viewBox="0 0 680 46" className="w-full h-auto" aria-hidden="true">
@@ -38,7 +38,7 @@ export function MarigoldDivider() {
       <line x1="0" y1="20" x2="298" y2="20" stroke="#E8830E" strokeWidth="1" />
       <line x1="382" y1="20" x2="680" y2="20" stroke="#E8830E" strokeWidth="1" />
       <circle cx="340" cy="20" r="17" fill="#F4A623" opacity="0.5" />
-      <g style={{ animation: 'bannerChakraSpin 6s linear infinite', transformOrigin: '340px 20px' }}>
+      <g style={{ animation: 'bannerChakraSpin 6s linear infinite', transformOrigin: 'center', transformBox: 'fill-box' }}>
         <g fill="#E8830E">
           <ellipse cx="340" cy="7" rx="5" ry="7" />
           <ellipse cx="352" cy="11" rx="5" ry="7" transform="rotate(45 352 11)" />
@@ -86,7 +86,7 @@ export function MandalaDivider() {
       <line x1="382" y1="22" x2="680" y2="22" stroke="#6B3FA0" strokeWidth="1" />
       <circle cx="340" cy="22" r="20" fill="none" stroke="#6B3FA0" strokeWidth="1" />
       <circle cx="340" cy="22" r="14" fill="none" stroke="#D4A024" strokeWidth="0.8" />
-      <g style={{ animation: 'bannerChakraSpin 30s linear infinite', transformOrigin: '340px 22px' }}>
+      <g style={{ animation: 'bannerChakraSpin 30s linear infinite', transformOrigin: 'center', transformBox: 'fill-box' }}>
         <g fill="#D4A024">
           {outerPts.map(([x, y]) => <circle key={`o${x}${y}`} cx={x} cy={y} r="2.4" />)}
         </g>
@@ -133,21 +133,6 @@ export function DiyaDivider() {
   );
 }
 
-export function BelPatraDivider() {
-  return (
-    <svg viewBox="0 0 680 38" className="w-full h-auto" aria-hidden="true">
-      <line x1="0" y1="24" x2="302" y2="24" stroke="#2E7D6B" strokeWidth="1" />
-      <line x1="378" y1="24" x2="680" y2="24" stroke="#2E7D6B" strokeWidth="1" />
-      <g fill="#2E7D6B">
-        <path d="M340 30 Q328 20 340 6 Q352 20 340 30Z" opacity="0.9" />
-        <path d="M340 30 Q316 26 314 14 Q332 14 340 30Z" opacity="0.75" />
-        <path d="M340 30 Q364 26 366 14 Q348 14 340 30Z" opacity="0.75" />
-      </g>
-      <line x1="340" y1="30" x2="340" y2="34" stroke="#8A5A34" strokeWidth="1.5" />
-    </svg>
-  );
-}
-
 export function TempleBellDivider() {
   return (
     <svg viewBox="0 0 680 46" className="w-full h-auto" aria-hidden="true">
@@ -171,17 +156,17 @@ export function SwastikaDivider() {
       <line x1="0" y1="23" x2="300" y2="23" stroke="#B3241F" strokeWidth="1" />
       <line x1="380" y1="23" x2="680" y2="23" stroke="#B3241F" strokeWidth="1" />
       <g style={{ animation: 'bannerGlow 4s ease-in-out infinite', transformOrigin: 'center', transformBox: 'fill-box' }}>
+        <g transform="translate(340,23)" fill="none" stroke="#B3241F" strokeWidth="6.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M0 0 L0 -17 L10 -17" />
+          <path d="M0 0 L17 0 L17 10" />
+          <path d="M0 0 L0 17 L-10 17" />
+          <path d="M0 0 L-17 0 L-17 -10" />
+        </g>
         <g transform="translate(340,23)" fill="#B3241F">
-          <rect x="-3" y="-16" width="6" height="32" />
-          <rect x="-16" y="-3" width="32" height="6" />
-          <rect x="-3" y="-16" width="12" height="6" />
-          <rect x="10" y="-3" width="6" height="12" />
-          <rect x="-9" y="10" width="12" height="6" />
-          <rect x="-16" y="-9" width="6" height="12" />
-          <circle cx="20" cy="-20" r="2.2" />
-          <circle cx="-20" cy="-20" r="2.2" />
-          <circle cx="20" cy="20" r="2.2" />
-          <circle cx="-20" cy="20" r="2.2" />
+          <circle cx="22" cy="-22" r="2.4" />
+          <circle cx="-22" cy="-22" r="2.4" />
+          <circle cx="22" cy="22" r="2.4" />
+          <circle cx="-22" cy="22" r="2.4" />
         </g>
       </g>
     </svg>
