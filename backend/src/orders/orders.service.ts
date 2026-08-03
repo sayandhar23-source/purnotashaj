@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Order, OrderDocument } from '../common/schemas/order.schema';
@@ -6,6 +6,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { MailService } from '../mail/mail.service';
 import { ReferralsService } from '../referrals/referrals.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { GeoService } from '../geo/geo.service';
 
 @Injectable()
 export class OrdersService {
@@ -14,9 +15,19 @@ export class OrdersService {
     private mailService: MailService,
     private referralsService: ReferralsService,
     private notificationsService: NotificationsService,
+    private geoService: GeoService,
   ) {}
 
-  async create(userId: string, dto: CreateOrderDto) {
+  async create(userId: string, dto: CreateOrderDto, ip: string | null) {
+    // We don't ship outside India yet — block the order at the API level,
+    // not just in the UI, so this can't be bypassed by calling the endpoint directly.
+    const isIndia = await this.geoService.isIndianIp(ip);
+    if (!isIndia) {
+      throw new ForbiddenException(
+        "We don't deliver outside India yet — international shipping is coming soon.",
+      );
+    }
+
     const { referralCode, ...rest } = dto;
     const referralUserId = await this.referralsService.resolveReferrer(referralCode, userId);
     return this.orderModel.create({
