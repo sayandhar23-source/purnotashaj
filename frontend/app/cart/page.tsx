@@ -5,10 +5,12 @@ import Link from 'next/link';
 import { Trash2 } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
 import { useDocumentTitle } from '@/lib/useDocumentTitle';
+import { useCurrency } from '@/lib/currency-context';
 
 export default function CartPage() {
   useDocumentTitle('Your Cart');
   const { items, removeItem, updateQuantity, total } = useCart();
+  const { formatPrice } = useCurrency();
 
   if (items.length === 0) {
     return (
@@ -37,7 +39,7 @@ export default function CartPage() {
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{item.title}</p>
                 {item.variantName && <p className="text-sm text-gray-500">{item.variantName}</p>}
-                <p className="font-semibold mt-1">₹{item.price}</p>
+                <p className="font-semibold mt-1">{formatPrice(item.price)}</p>
               </div>
               {/* Remove button sits up here on mobile, next to the details */}
               <button
@@ -83,7 +85,7 @@ export default function CartPage() {
       </div>
 
       <div className="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <span className="text-lg font-semibold">Total: ₹{total}</span>
+        <span className="text-lg font-semibold">Total: {formatPrice(total)}</span>
         <Link href="/checkout" className="btn-primary text-center">
           Proceed to Checkout
         </Link>
