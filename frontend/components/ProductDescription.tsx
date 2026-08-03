@@ -1,4 +1,14 @@
-import { parseDescription } from '@/lib/parseDescription';
+import { parseDescription, parseInline } from '@/lib/parseDescription';
+
+function Inline({ text }: { text: string }) {
+  return (
+    <>
+      {parseInline(text).map((part, i) =>
+        part.bold ? <strong key={i}>{part.text}</strong> : <span key={i}>{part.text}</span>,
+      )}
+    </>
+  );
+}
 
 export default function ProductDescription({ text }: { text: string }) {
   const blocks = parseDescription(text);
@@ -9,7 +19,7 @@ export default function ProductDescription({ text }: { text: string }) {
         if (block.type === 'heading') {
           return (
             <p key={i} className="font-semibold text-gray-800 pt-2">
-              {block.text}
+              <Inline text={block.text} />
             </p>
           );
         }
@@ -17,12 +27,18 @@ export default function ProductDescription({ text }: { text: string }) {
           return (
             <ul key={i} className="list-disc pl-5 space-y-1">
               {block.items.map((item, j) => (
-                <li key={j}>{item}</li>
+                <li key={j}>
+                  <Inline text={item} />
+                </li>
               ))}
             </ul>
           );
         }
-        return <p key={i}>{block.text}</p>;
+        return (
+          <p key={i}>
+            <Inline text={block.text} />
+          </p>
+        );
       })}
     </div>
   );
