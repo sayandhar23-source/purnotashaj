@@ -6,6 +6,7 @@ import { Order, OrderSchema } from '../common/schemas/order.schema';
 import { MailModule } from '../mail/mail.module';
 import { ReferralsModule } from '../referrals/referrals.module';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { GeoModule } from '../geo/geo.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
     MailModule,
     ReferralsModule,
     NotificationsModule,
+    GeoModule,
   ],
   controllers: [OrdersController],
   providers: [OrdersService],
