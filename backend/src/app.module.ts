@@ -22,6 +22,7 @@ import { ReferralsModule } from './referrals/referrals.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { DeliveryModule } from './delivery/delivery.module';
 import { GeoModule } from './geo/geo.module';
+import { CurrencyModule } from './currency/currency.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { GeoModule } from './geo/geo.module';
     NotificationsModule,
     DeliveryModule,
     GeoModule,
+    CurrencyModule,
   ],
 })
 export class AppModule {}
