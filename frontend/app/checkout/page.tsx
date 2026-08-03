@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { useCart } from '@/lib/cart-context';
@@ -30,6 +30,15 @@ export default function CheckoutPage() {
     pincode: '',
   });
   const [loading, setLoading] = useState(false);
+  // null = still checking, true = blocked (shown), false = allowed to proceed
+  const [blockedRegion, setBlockedRegion] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    api
+      .get('/geo/me')
+      .then((res) => setBlockedRegion(res.data.isIndia === false))
+      .catch(() => setBlockedRegion(false)); // fail open — never block a real customer over a lookup hiccup
+  }, []);
 
   const loadRazorpayScript = () =>
     new Promise((resolve) => {
@@ -133,6 +142,18 @@ export default function CheckoutPage() {
       setLoading(false);
     }
   };
+
+  if (blockedRegion) {
+    return (
+      <div className="max-w-md mx-auto px-4 py-20 text-center">
+        <h1 className="text-xl font-serif font-semibold mb-3">We're not there yet — but we're getting there!</h1>
+        <p className="text-sm text-gray-500">
+          We currently only deliver within India. International shipping is coming soon — thanks
+          for your patience.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
