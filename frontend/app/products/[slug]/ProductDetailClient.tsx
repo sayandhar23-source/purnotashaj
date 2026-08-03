@@ -15,6 +15,7 @@ import Breadcrumbs, { Crumb } from '@/components/Breadcrumbs';
 import DeliveryEstimate from '@/components/DeliveryEstimate';
 import { getImageAltTitle } from '@/lib/imageSeo';
 import { useCurrency } from '@/lib/currency-context';
+import ProductDescription from '@/components/ProductDescription';
 
 type Variant = {
   _id: string;
@@ -304,11 +305,7 @@ export default function ProductDetailClient({
           <DeliveryEstimate />
         </div>
 
-        {product.description && (
-          <div className="mt-8 text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-            {product.description}
-          </div>
-        )}
+        {product.description && <ProductDescription text={product.description} />}
 
         {videoInfo && (
           <div className="mt-8">
