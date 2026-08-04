@@ -14,5 +14,6 @@ import { StoreSettings, StoreSettingsSchema } from '../common/schemas/store-sett
   ],
   controllers: [ChatController],
   providers: [ChatService],
+  exports: [ChatService],
 })
 export class ChatModule {}
