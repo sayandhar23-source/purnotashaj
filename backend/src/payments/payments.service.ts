@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Order, OrderDocument } from '../common/schemas/order.schema';
 import { MailService } from '../mail/mail.service';
+import { ChatService } from '../chat/chat.service';
 
 @Injectable()
 export class PaymentsService {
@@ -17,6 +18,7 @@ export class PaymentsService {
     private config: ConfigService,
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
     private mailService: MailService,
+    private chatService: ChatService,
   ) {
     this.stripe = new Stripe(this.config.get('STRIPE_SECRET_KEY') || '', {
       apiVersion: '2023-10-16',
@@ -90,6 +92,12 @@ export class PaymentsService {
             order.totalAmount,
             customer?.email || 'unknown',
           );
+          await this.chatService.sendOrderAlert({
+            orderId: order._id.toString(),
+            customerEmail: customer?.email || 'unknown',
+            items: order.items,
+            totalAmount: order.totalAmount,
+          });
         }
       }
     }
@@ -168,6 +176,12 @@ export class PaymentsService {
         order.totalAmount,
         customer?.email || 'unknown',
       );
+      await this.chatService.sendOrderAlert({
+        orderId: order._id.toString(),
+        customerEmail: customer?.email || 'unknown',
+        items: order.items,
+        totalAmount: order.totalAmount,
+      });
     }
     return { verified: true };
   }
