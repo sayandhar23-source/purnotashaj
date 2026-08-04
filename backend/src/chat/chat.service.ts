@@ -109,4 +109,40 @@ export class ChatService {
     });
     return result ? { ok: true } : { ok: false, message: 'Telegram rejected the webhook — check TELEGRAM_BOT_TOKEN.' };
   }
+
+  // One-way admin alert (not part of the two-way customer chat thread) — sent
+  // the moment a payment succeeds, reusing the same bot/chat already
+  // configured for live chat, so there's nothing extra to set up.
+  async sendOrderAlert(params: {
+    orderId: string;
+    customerName?: string;
+    customerEmail: string;
+    items: { title: string; quantity: number; price: number }[];
+    totalAmount: number;
+  }) {
+    const settings = await this.settingsModel.findOne();
+    const chatId = settings?.telegramChatId;
+    if (!chatId) return; // Telegram not set up — the email alert still covers this
+
+    const itemLines = params.items
+      .map((i) => `• ${i.title} × ${i.quantity} — ₹${i.price}`)
+      .join('\n');
+
+    const text = [
+      '🛍️ New order received!',
+      '',
+      `Order ID: #${params.orderId.slice(-8)}`,
+      `Customer: ${params.customerName || params.customerEmail}`,
+      `Email: ${params.customerEmail}`,
+      '',
+      'Items:',
+      itemLines,
+      '',
+      `Total: ₹${params.totalAmount}`,
+      '',
+      'Go to Admin → Orders to confirm.',
+    ].join('\n');
+
+    await this.telegramApi('sendMessage', { chat_id: chatId, text });
+  }
 }
