@@ -11,8 +11,6 @@ import Footer from '@/components/Footer';
 import LiveChatWidget from '@/components/LiveChatWidget';
 import ReferralCapture from '@/lib/referral';
 
-import type { Metadata } from "next";
-
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.purnotashaj.shop"),
 
