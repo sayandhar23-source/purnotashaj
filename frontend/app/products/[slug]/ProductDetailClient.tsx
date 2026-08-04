@@ -305,14 +305,31 @@ export default function ProductDetailClient({
           <button onClick={() => toggle(product._id)} className="border rounded-full p-2.5 self-end" aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}>
             <Heart size={20} className={wishlisted ? 'fill-red-500 text-red-500' : ''} />
           </button>
-          <button
-            onClick={handleShare}
-            disabled={sharing}
-            className="border rounded-full p-2.5 self-end disabled:opacity-50"
-            aria-label="Share this product"
-          >
-            <Share2 size={20} />
-          </button>
+          {user ? (
+            <button
+              onClick={handleShare}
+              disabled={sharing}
+              className="flex items-center gap-1.5 rounded-full px-4 py-2.5 self-end text-sm font-semibold disabled:opacity-50 shrink-0"
+              style={{
+                backgroundColor: '#D4A024',
+                color: '#3D1A0F',
+                animation: 'shareEarnGlow 2.2s ease-in-out infinite',
+              }}
+              aria-label="Share this product and earn a commission"
+            >
+              <Share2 size={16} />
+              Share to Earn
+            </button>
+          ) : (
+            <button
+              onClick={handleShare}
+              disabled={sharing}
+              className="border rounded-full p-2.5 self-end disabled:opacity-50"
+              aria-label="Share this product"
+            >
+              <Share2 size={20} />
+            </button>
+          )}
         </div>
 
         <div className="mt-6 max-w-sm space-y-3">
