@@ -11,16 +11,83 @@ import Footer from '@/components/Footer';
 import LiveChatWidget from '@/components/LiveChatWidget';
 import ReferralCapture from '@/lib/referral';
 
+import type { Metadata } from "next";
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.purnotashaj.shop'),
-  title: 'Purnota Shaj',
-  description: 'Clothing, jewellery, ornaments and makeup — curated for you.',
-  openGraph: {
-    siteName: 'Purnota Shaj',
-    type: 'website',
-    title: 'Purnota Shaj',
-    description: 'Clothing, jewellery, ornaments and makeup — curated for you.',
+  metadataBase: new URL("https://www.purnotashaj.shop"),
+
+  title: {
+    default: "Purnota Shaj | Premium Cotton Sarees, Nighties & Women's Fashion",
+    template: "%s | Purnota Shaj",
   },
+
+  description:
+    "Shop premium pure cotton sarees, batik sarees, Bengali ethnic wear, cotton nighties, kurtis, jewellery, makeup and women's fashion online. Quality fabrics, affordable prices & delivery across India.",
+
+  keywords: [
+    "Purnota Shaj",
+    "cotton saree",
+    "pure cotton saree",
+    "batik saree",
+    "Bengali saree",
+    "hand block print saree",
+    "cotton nighty",
+    "women's ethnic wear",
+    "kurti",
+    "women's clothing",
+    "fashion boutique",
+    "jewellery",
+    "makeup",
+    "online shopping India",
+  ],
+
+  authors: [{ name: "Purnota Shaj" }],
+  creator: "Purnota Shaj",
+  publisher: "Purnota Shaj",
+
+  alternates: {
+    canonical: "https://www.purnotashaj.shop",
+  },
+
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "https://www.purnotashaj.shop",
+    siteName: "Purnota Shaj",
+    title: "Purnota Shaj | Premium Cotton Sarees & Women's Fashion",
+    description:
+      "Discover premium cotton sarees, batik sarees, cotton nighties, jewellery and women's fashion at affordable prices with delivery across India.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Purnota Shaj",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Purnota Shaj | Premium Cotton Sarees & Women's Fashion",
+    description:
+      "Shop premium cotton sarees, batik sarees, nighties, jewellery and women's fashion online.",
+    images: ["/og-image.jpg"],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+
+  category: "shopping",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
