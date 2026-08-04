@@ -4,13 +4,15 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
-import { Heart, ChevronLeft, ChevronRight, ShoppingBag, Zap } from 'lucide-react';
+import { Heart, ChevronLeft, ChevronRight, ShoppingBag, Zap, Share2 } from 'lucide-react';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import ProductCard, { ProductSummary } from '@/components/ProductCard';
 import { getVideoInfo } from '@/lib/video';
 import SaleCountdown from '@/components/SaleCountdown';
 import { useWishlist } from '@/lib/wishlist-context';
 import { useCart } from '@/lib/cart-context';
+import { useAuth } from '@/lib/auth-context';
+import { api } from '@/lib/api';
 import Breadcrumbs, { Crumb } from '@/components/Breadcrumbs';
 import DeliveryEstimate from '@/components/DeliveryEstimate';
 import { getImageAltTitle } from '@/lib/imageSeo';
@@ -67,6 +69,8 @@ export default function ProductDetailClient({
   const [qty, setQty] = useState(1);
   const { isWishlisted, toggle } = useWishlist();
   const { formatPrice } = useCurrency();
+  const { user } = useAuth();
+  const [sharing, setSharing] = useState(false);
   const wishlisted = isWishlisted(product._id);
   const { addItem, clearCart } = useCart();
   const router = useRouter();
@@ -126,6 +130,41 @@ export default function ProductDetailClient({
     clearCart();
     addItem(buildCartItem());
     router.push('/checkout');
+  };
+
+  const handleShare = async () => {
+    setSharing(true);
+    try {
+      const baseUrl = `${window.location.origin}/products/${product.slug}`;
+      let shareUrl = baseUrl;
+
+      // Logged-in users share their own referral link automatically —
+      // no need to go generate one from the dashboard first.
+      if (user) {
+        try {
+          const res = await api.get('/referrals/me');
+          const code = res.data?.referralCode;
+          if (code) {
+            const url = new URL(baseUrl);
+            url.searchParams.set('ref', code);
+            shareUrl = url.toString();
+          }
+        } catch {
+          // Referral lookup failed — still share the plain link rather than blocking sharing entirely.
+        }
+      }
+
+      if (navigator.share) {
+        await navigator.share({ title: product.title, url: shareUrl });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success('Link copied to clipboard');
+      }
+    } catch {
+      // User cancelled the native share sheet, or clipboard access failed — either way, no error needed.
+    } finally {
+      setSharing(false);
+    }
   };
 
   return (
@@ -265,6 +304,14 @@ export default function ProductDetailClient({
           </div>
           <button onClick={() => toggle(product._id)} className="border rounded-full p-2.5 self-end" aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}>
             <Heart size={20} className={wishlisted ? 'fill-red-500 text-red-500' : ''} />
+          </button>
+          <button
+            onClick={handleShare}
+            disabled={sharing}
+            className="border rounded-full p-2.5 self-end disabled:opacity-50"
+            aria-label="Share this product"
+          >
+            <Share2 size={20} />
           </button>
         </div>
 
