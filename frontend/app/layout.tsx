@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 import { CartProvider } from '@/lib/cart-context';
@@ -9,7 +10,6 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import LiveChatWidget from '@/components/LiveChatWidget';
 import ReferralCapture from '@/lib/referral';
-import GoogleAnalytics from '@/components/GoogleAnalytics';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.purnotashaj.shop'),
@@ -32,9 +32,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@500;700&display=swap"
           rel="stylesheet"
         />
+
+        {/* Google tag (gtag.js) */}
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-P141FZ55T8" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-P141FZ55T8');
+          `}
+        </Script>
       </head>
       <body>
-        <GoogleAnalytics />
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
