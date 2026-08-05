@@ -75,6 +75,9 @@ export default async function HomePage() {
 
   return (
     <div>
+       <h1 className="sr-only">
+        Premium Women's Fashion Online
+      </h1>
       {bannerContent?.isActive !== false && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
           <TempleSaleBanner
