@@ -15,12 +15,12 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.purnotashaj.shop"),
 
   title: {
-    default: "Purnota Shaj | Premium Cotton Sarees, Nighties & Women's Fashion",
+    default: "Purnota Shaj | Premium Cotton Sarees & Nighties Online.",
     template: "%s | Purnota Shaj",
   },
 
   description:
-    "Shop premium pure cotton sarees, batik sarees, Bengali ethnic wear, cotton nighties, kurtis, jewellery, makeup and women's fashion online. Quality fabrics, affordable prices & delivery across India.",
+    "Shop premium pure cotton sarees, batik sarees, cotton nighties, jewellery and women's fashion with fast delivery across India.",
 
   keywords: [
     "Purnota Shaj",
