@@ -1,0 +1,67 @@
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
+import { OrdersService } from './orders.service';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { RateLimit } from '../common/throttle/rate-limit';
+import { GeoService } from '../geo/geo.service';
+
+@UseGuards(JwtAuthGuard)
+@Controller('orders')
+export class OrdersController {
+  constructor(
+    private ordersService: OrdersService,
+    private geoService: GeoService,
+  ) {}
+
+  @RateLimit(10)
+  @Post()
+  create(@CurrentUser() user: any, @Body() dto: CreateOrderDto, @Req() req: Request) {
+    const ip = this.geoService.getClientIp(req);
+    return this.ordersService.create(user.userId, dto, ip);
+  }
+
+  @Get('my')
+  findMine(@CurrentUser() user: any) {
+    return this.ordersService.findMyOrders(user.userId);
+  }
+
+  @Get(':id')
+  findOne(@CurrentUser() user: any, @Param('id') id: string) {
+    return this.ordersService.findOne(id, user.role === 'admin' ? undefined : user.userId);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles('admin')
+  @Get()
+  findAll(@Query('page') page = '1', @Query('limit') limit = '20') {
+    return this.ordersService.findAll(page, limit);
+  }
+
+  // Powers the notification badge in the admin dashboard
+  @UseGuards(RolesGuard)
+  @Roles('admin')
+  @Get('admin/pending-count')
+  pendingCount() {
+    return this.ordersService.countPendingConfirmation().then((count) => ({ count }));
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles('admin')
+  @Patch(':id/status')
+  updateStatus(@Param('id') id: string, @Body() dto: UpdateOrderStatusDto) {
+    return this.ordersService.updateStatus(id, dto.status);
+  }
+
+  // Admin confirms a paid order — this triggers the customer confirmation email
+  @UseGuards(RolesGuard)
+  @Roles('admin')
+  @Patch(':id/confirm')
+  confirmOrder(@Param('id') id: string) {
+    return this.ordersService.confirmOrder(id);
+  }
+}
